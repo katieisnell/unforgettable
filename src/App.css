@@ -1,0 +1,34 @@
+.App {
+  text-align: center;
+  height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+.App-logo {
+  height: 50vmin;
+}
+
+.App-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 60px;
+  font-size: calc(10px + 2vmin);
+  font-family: Arial;
+  color: black;
+}
+
+@media (min-width: 650px ) {
+  .App {
+      background-position: center center;
+  }
+
+  .App-content {
+      align-items: flex-end;
+      justify-content: center;
+  }
+}
