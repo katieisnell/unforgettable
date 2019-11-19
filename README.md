@@ -1,5 +1,5 @@
 # unforgettable
-📸A web application designed to help you relive your most memorable moments from a collection of your photographs
+📸A web application designed to help you relive your most memorable moments from a collection of your photographs.
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
