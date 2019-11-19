@@ -4,6 +4,7 @@ import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Dashboard from './Dashboard';
+import NotFound from './NotFound';
 import * as serviceWorker from './serviceWorker';
 
 const routing = (
@@ -11,6 +12,7 @@ const routing = (
     <div>
       <Route exact path="/" component={App} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route component={NotFound} />
     </div>
   </Router>
   )

@@ -1,0 +1,51 @@
+.logo {
+  margin-right: 30px;
+}
+
+.navbar {
+  margin-bottom: 15px;
+}
+
+h1.font-weight-lighter.text-muted {
+  display: inline-block;
+  font-size: 2rem;
+  margin: 0;
+}
+
+a, a:link, a:visited {
+  color: #660099;
+}
+
+hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+a:hover, a:active {
+  color: #FFCC33;
+}
+
+label {
+  font-style: italic;
+}
+
+.footer span.float-right {
+  margin-right: 50px;
+}
+
+input.btn.btn-primary {
+  margin-top: 20px;
+}
+
+input.btn.btn-primary:disabled {
+  background-color: #e0ccea;
+  border-color: #c199d6;
+  color: #e0ccea;
+}
+
+input.btn.btn-primary:enabled {
+  background-color: #660099;
+  border-color: #51007a;
+  color: #FFCC33;
+  font-weight:bolder;
+}

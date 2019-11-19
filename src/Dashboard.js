@@ -11,7 +11,9 @@ class Dashboard extends React.Component {
     return (
       <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
         <div className="App-content">
-          <img src={logo} className="App-logo" alt="logo" />
+          <a href='/'>
+            <img src={logo} className="App-logo" alt="logo" />
+          </a>
           <div className='App-header'>
             <h1>Dashboard</h1>
             <p>Logged in</p>

@@ -1,0 +1,90 @@
+{% extends "base.thtml" %}
+{% block head %}Participant Information{% endblock %}
+
+{% block content %}
+  <p>
+    Researchers from the
+    <a href="https://www.cs.manchester.ac.uk" target="_blank">School of Computer Science</a>
+    at the <a href="https://www.manchester.ac.uk" target="_blank">University of Manchester</a>
+    are collecting a dataset of social media data. This dataset will be
+    used to explore how these platforms are used. Specific areas of exploration
+    include: memory and reminiscence, and health and well-being.
+  </p>
+  <p>
+    You are being invited to contribute your Instagram data to this dataset.
+    Before you decide, it is important for you to understand why the research is
+    being done and what it will involve.
+  </p>
+  <p>
+    Please take time to read the following information carefully and discuss it
+    with others if you wish.
+    If there is anything that is not clear or if you would like more
+    information, you can contact the primary researcher
+    (<a href="mailto:sarah.&#99;lin&#99;&#104;@man&#99;hester.a&#99;.uk">sarah.&#99;lin&#99;&#104;@man&#99;hester.a&#99;.uk</a>).
+    Take time to decide whether or not you wish to take part.
+    The full information sheet can be downloaded
+    <a href="/static/info_sheet.pdf" download><b>here</b></a> -- please keep a
+    copy so that you can refer back to it in the future.
+  </p>
+  <p><b>You must be aged 16+ to share your data with us.</b></p>
+
+  <h2>What would I be asked to do if I took part?</h2>
+  <p>
+    If you agree to share your data, the research team will be able to see and download the following items:
+    <ul>
+     <li>your Instagram username and profile,</li>
+     <li>images and videos that you have posted to Instagram,</li>
+     <li>social interactions (likes, comments) for the images and videos that you have posted to Instagram.</li>
+    </ul>
+    Instagram also grants permissions to access your Instagram friends list, this will not be used by the research team.
+    We will not be able to post to Instagram on your behalf.
+  </p><p>
+   You will be asked to complete a one-off authorisation step that tells
+   Instagram that you are happy to share your data; this should take no more
+   than two minutes to complete.
+  </p><p>
+    Your participation is voluntary and you may
+    <a href="https://www.instagram.com/accounts/manage_access/" target="_blank">revoke your authorisation</a>
+    at any time. This will prevent further access to your data.
+  </p>
+
+  <h3>What do I do now?</h3>
+  <p>
+    If you are happy to share your data for the research purposes described above,
+    please click the consent button below and click <b>next</b> to proceed to the
+    Instagram authorisation.
+  </p>
+  <p>
+    The personal information we collect and use to conduct this research will be processed
+    in accordance with data protection law as explained in the Participant Information Sheet
+    and the Privacy Notice for Research Participants.
+    If you do not wish to share your data, you may close this webpage and no
+    data will be stored.
+  </p>
+
+  <form id="consent" action="/authorise" method="post">
+    <div class="row">
+      <div class="col-sm-auto align-self-center">
+        <input id="chk_consent" type="checkbox" class="form-control-lg"
+          data-toggle="toggle" data-on="I agree" data-onstyle="success"
+          data-off="Click here to agree" data-offstyle="danger" data-size="large" />
+      </div>
+      <div class="col-sm align-self-center"><label for="chk_consent">
+        &#10004; I confirm that I have read, considered, and understood the information given above
+        and in the <a href="/static/info_sheet.pdf" download>participant information sheet (v2.1)</a>.<br/>
+        &#10004; I consent to share my data with the research team as detailed in the
+        <a href="/static/info_sheet.pdf" download>participant information sheet (v2.1)</a>.<br/>
+        &#10004; I understand that research and results based on this dataset may be described in
+        research and teaching publications, but that images and videos that I share will not be
+        published without my permission.<br/>
+        &#10004; I understand that my participation is voluntary and that I am free to withdraw
+        authorisation at any time.<br/>
+        &#10004; I am 16 years of age or older.
+      </label></div>
+    </div>
+    <input class="btn btn-primary btn-lg btn-block" type="submit" value="next >>" id="btn_consent" disabled>
+  </form>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+  <script src="/static/consent.js"></script>
+{% endblock %}
