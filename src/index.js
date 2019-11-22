@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Dashboard from './Dashboard';
@@ -9,11 +9,11 @@ import * as serviceWorker from './serviceWorker';
 
 const routing = (
   <Router>
-    <div>
+    <Switch>
       <Route exact path="/" component={App} />
       <Route path="/dashboard" component={Dashboard} />
       <Route component={NotFound} />
-    </div>
+    </Switch>
   </Router>
   )
 
