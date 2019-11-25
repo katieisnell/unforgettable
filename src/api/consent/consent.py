@@ -1,11 +1,10 @@
 import os
 
-import cherrypy
+import cherrypy 
 from jinja2 import Environment, FileSystemLoader
 
 APP_ID = '374405813315469'
 REDIRECT_URI = 'https%3A%2F%2Fkatieisnell.github.io%2F'
-# REDIRECT_URI = 'localhost%3A3000%2Fdashboard'
 INSTA_AUTHORISE_URI = 'https://api.instagram.com/oauth/authorize/'
 
 INSTA_AUTHORISE_URI += '?app_id={app_id}'.format(
