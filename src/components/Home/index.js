@@ -1,13 +1,12 @@
 import React from 'react';
-import './App.css';
 
-import logo from './logo.png';
-import desktopImage from './paper-desktop.jpg';
+import '../App/App.css';
+import logo from '../../assets/logo.png'
+import desktopImage from '../../assets/paper-desktop.jpg';
 
-class NotFound extends React.Component {
+class Landing extends React.Component {
   render() {
     const imageUrl = desktopImage;
-
     return (
       <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
         <div className="App-content">
@@ -15,14 +14,13 @@ class NotFound extends React.Component {
             <img src={logo} className="App-logo" alt="logo" />
           </a>
           <div className='App-header'>
-            <h1>Uh oh!</h1>
-            <p>The page you are looking for doesn't exist 😭</p>
+            <h1>#unforgettable</h1>
+            <p>Login with <a href='http://127.0.0.1:8080/'>Instagram</a></p>
           </div>
         </div>
       </div>
     );
   }
-
 }
 
-export default NotFound;
+export default Landing;
