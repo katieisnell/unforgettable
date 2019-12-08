@@ -5,6 +5,7 @@ import logo from '../../assets/logo.png'
 import desktopImage from '../../assets/paper-desktop.jpg';
 
 import  { FirebaseContext } from '../Firebase';
+import { withAuthorisation } from '../Session';
 
 class Dashboard extends React.Component {
   constructor() {
@@ -42,4 +43,6 @@ class Dashboard extends React.Component {
 
 }
 
-export default Dashboard;
+const condition = authUser => !!authUser;
+
+export default withAuthorisation(condition)(Dashboard);
