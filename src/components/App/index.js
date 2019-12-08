@@ -3,7 +3,6 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import './App.css';
 
-import { withFirebase } from '../Firebase';
 import { withAuthentication } from '../Session';
 
 import AccountPage from '../Account';
