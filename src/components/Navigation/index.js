@@ -20,18 +20,30 @@ const Navigation = () => (
 
 const NavigationAuth = () => (
   <div className="Navigation">
-    <Link to={ROUTES.HOME}>Home</Link>
-    <Link to={ROUTES.DASHBOARD}>Dashboard</Link>
-    <Link to={ROUTES.ACCOUNT}>Account</Link>
-    <Link to={ROUTES.ADMIN}>Admin</Link>
+    <button>
+      <Link to={ROUTES.HOME}>Home</Link>
+    </button>
+    <button>
+      <Link to={ROUTES.DASHBOARD}>Dashboard</Link>
+    </button>
+    <button>
+      <Link to={ROUTES.ACCOUNT}>Account</Link>
+    </button>
+    <button>
+      <Link to={ROUTES.ADMIN}>Admin</Link>
+    </button>
     <SignOutButton />
   </div>
 )
 
 const NavigationNotAuth = () => (
   <div className="Navigation">
-    <Link to={ROUTES.HOME}>Home</Link>
-    <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+    <button>
+      <Link to={ROUTES.HOME}>Home</Link>
+    </button>
+    <button>
+      <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+    </button>
   </div>
 )
 
