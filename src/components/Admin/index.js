@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Switch, Route, Link } from 'react-router-dom';
 
 import '../App/App.css';
 import desktopImage from '../../assets/paper-desktop.jpg';
@@ -6,9 +7,29 @@ import desktopImage from '../../assets/paper-desktop.jpg';
 import { withFirebase } from '../Firebase';
 import { AuthUserContext, withAuthorisation } from '../Session';
 
+import * as ROUTES from '../../constants/routes';
+
 const imageUrl = desktopImage;
 
-class AdminPage extends Component {
+const AdminPage = () => (
+  <AuthUserContext.Consumer>
+    {authUser => (
+      <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
+        <div className="App-content">
+          <div className='App-header'>  
+            <h1>Admin area</h1>
+            <Switch>
+              <Route exact path={ROUTES.ADMIN_DETAILS} component={UserItem} />
+              <Route exact path={ROUTES.ADMIN} component={UserList} />
+            </Switch>
+          </div>
+        </div>
+      </div>
+    )}
+  </AuthUserContext.Consumer>
+);
+
+class UserListBase extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -51,41 +72,99 @@ class AdminPage extends Component {
     const { users, loading } = this.state;
 
     return (
-      <AuthUserContext.Consumer>
-        {authUser => (
-          <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
-            <div className="App-content">
-              <div className='App-header'>        
-                <h1>Admin area (temporary)</h1>
-                {loading && <div>Loading ...</div>}
-                {users && users.length && <UserList users={users} />}
-              </div>
+      <div>
+        {loading && <div>Loading ...</div>}
+        {users && users.length && 
+          users.map(user => (
+            <div key={user.uid}>
+              <hr/>
+              <span>
+                <strong>ID</strong> - {user.uid}
+              </span>
+              <br/>
+              <span>
+                <strong>Email</strong> - {user.email}
+              </span>
+              <br/>
+              <span>
+                <strong>Username</strong> - {user.username}
+              </span>
+              <br/>
+              <span>
+                <Link
+                  to={{
+                    pathname: `${ROUTES.ADMIN}/${user.uid}`,
+                    state: { user },
+                  }}
+                >                  
+                  Details
+                </Link>
+              </span>
             </div>
-          </div>
-        )}
-      </AuthUserContext.Consumer>
+          ))}
+      </div>
     );
   }
 }
 
-const UserList = ({ users }) => (
-  users.map(user => (
-    <div key={user.uid}>
-      <span>
-        <strong>ID</strong> - {user.uid}
-      </span>
-      <br/>
-      <span>
-        <strong>Email</strong> - {user.email}
-      </span>
-      <br/>
-      <span>
-        <strong>Username</strong> - {user.username}
-      </span>
-    </div>
-  ))
-);
+class UserItemBase extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      user: null,
+      ...props.location.state,
+    };
+  }
+
+  componentDidMount() {
+    if (this.state.user) {
+      return;
+    }
+
+    this.setState({ loading: true });
+    this.props.firebase
+      .user(this.props.match.params.id)
+      .on('value', snapshot => {
+        this.setState({
+          user: snapshot.val(),
+          loading: false,
+        });
+      });
+  }
+
+  componentWillUnmount() {
+    this.props.firebase.user(this.props.match.params.id).off();
+  }
+
+  render() {
+    const { user, loading } = this.state;
+    return (
+      <div>
+        <h2>User ({this.props.match.params.id})</h2>
+        {loading && <div>Loading ...</div>}
+        {user && (
+          <div>
+            <span>
+              <strong>ID:</strong> {user.uid}
+            </span>
+            <br/>
+            <span>
+              <strong>Email:</strong> {user.email}
+            </span>
+            <br/>
+            <span>
+              <strong>Username:</strong> {user.username}
+            </span>
+          </div>
+        )}
+      </div>
+    );  }
+}
 
 const condition = authUser => !!authUser;
 
-export default withAuthorisation(condition)(withFirebase(AdminPage));
+const UserList = withFirebase(UserListBase);
+const UserItem = withFirebase(UserItemBase);
+
+export default withAuthorisation(condition)(AdminPage);

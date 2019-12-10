@@ -32,7 +32,7 @@ class Dashboard extends React.Component {
             <h1>Dashboard</h1>
             <FirebaseContext.Consumer>
               {firebase => {
-                return <div>I've access to Firebase and render something.</div>;
+                return <div>The Dashboard is accessible to every signed in user, congrats <span role="img" aria-label="content-face">😌</span></div>;
               }}
             </FirebaseContext.Consumer>
           </div>

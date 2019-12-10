@@ -77,6 +77,10 @@ class SignInFormBase extends Component {
         <button disabled={isInvalid} type="submit">
           Sign In
         </button>
+        <br/>
+        <button>
+          <a href='http://127.0.0.1:8080/'>Login with Instagram</a>
+        </button>
         {error && <p>{error.message}</p>}
       </form>
     );
