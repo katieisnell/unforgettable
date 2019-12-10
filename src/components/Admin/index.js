@@ -4,6 +4,7 @@ import '../App/App.css';
 import desktopImage from '../../assets/paper-desktop.jpg';
 
 import { withFirebase } from '../Firebase';
+import { AuthUserContext, withAuthorisation } from '../Session';
 
 const imageUrl = desktopImage;
 
@@ -50,15 +51,19 @@ class AdminPage extends Component {
     const { users, loading } = this.state;
 
     return (
-      <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
-        <div className="App-content">
-          <div className='App-header'>        
-            <h1>Admin area (temporary)</h1>
-            {loading && <div>Loading ...</div>}
-            {users && users.length && <UserList users={users} />}
-        </div>
-      </div>
-    </div>
+      <AuthUserContext.Consumer>
+        {authUser => (
+          <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
+            <div className="App-content">
+              <div className='App-header'>        
+                <h1>Admin area (temporary)</h1>
+                {loading && <div>Loading ...</div>}
+                {users && users.length && <UserList users={users} />}
+              </div>
+            </div>
+          </div>
+        )}
+      </AuthUserContext.Consumer>
     );
   }
 }
@@ -81,4 +86,6 @@ const UserList = ({ users }) => (
   ))
 );
 
-export default withFirebase(AdminPage);
+const condition = authUser => !!authUser;
+
+export default withAuthorisation(condition)(withFirebase(AdminPage));
