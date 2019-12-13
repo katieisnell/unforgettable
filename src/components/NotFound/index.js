@@ -1,8 +1,8 @@
 import React from 'react';
-import './App.css';
 
-import logo from './logo.png';
-import desktopImage from './paper-desktop.jpg';
+import '../App/App.css';
+import logo from '../../assets/logo.png'
+import desktopImage from '../../assets/paper-desktop.jpg';
 
 class NotFound extends React.Component {
   render() {
@@ -16,7 +16,7 @@ class NotFound extends React.Component {
           </a>
           <div className='App-header'>
             <h1>Uh oh!</h1>
-            <p>The page you are looking for doesn't exist 😭</p>
+            <p>The page you are looking for doesn't exist <span role="img" aria-label="crying-face">😭</span></p>
           </div>
         </div>
       </div>

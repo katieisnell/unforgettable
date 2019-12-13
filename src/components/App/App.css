@@ -26,6 +26,13 @@
   align-items: center;
 }
 
+.Navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 @media (min-width: 650px ) {
   .App {
       background-position: center center;
