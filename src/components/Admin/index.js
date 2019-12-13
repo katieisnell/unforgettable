@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
+import { compose } from 'recompose';
 
 import '../App/App.css';
 import desktopImage from '../../assets/paper-desktop.jpg';
@@ -8,6 +9,7 @@ import { withFirebase } from '../Firebase';
 import { AuthUserContext, withAuthorisation } from '../Session';
 
 import * as ROUTES from '../../constants/routes';
+import * as ROLES from '../../constants/roles';
 
 const imageUrl = desktopImage;
 
@@ -18,6 +20,9 @@ const AdminPage = () => (
         <div className="App-content">
           <div className='App-header'>  
             <h1>Admin area</h1>
+            <p>
+              The Admin area is accessible by every signed in admin user.
+            </p>
             <Switch>
               <Route exact path={ROUTES.ADMIN_DETAILS} component={UserItem} />
               <Route exact path={ROUTES.ADMIN} component={UserList} />
@@ -162,9 +167,13 @@ class UserItemBase extends Component {
     );  }
 }
 
-const condition = authUser => !!authUser;
-
 const UserList = withFirebase(UserListBase);
 const UserItem = withFirebase(UserItemBase);
 
-export default withAuthorisation(condition)(AdminPage);
+const condition = authUser =>
+  authUser && !!authUser.roles[ROLES.ADMIN];
+
+export default compose(
+  withAuthorisation(condition),
+  withFirebase,
+)(AdminPage);

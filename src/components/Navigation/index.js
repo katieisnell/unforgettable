@@ -7,18 +7,19 @@ import { AuthUserContext } from '../Session';
 
 import SignOutButton from '../SignOut';
 import * as ROUTES from '../../constants/routes';
+import * as ROLES from '../../constants/roles';
 
 const Navigation = () => (
   <div className="Navigation">
     <AuthUserContext.Consumer>
       {authUser =>
-        authUser ? <NavigationAuth /> : <NavigationNotAuth />
+        authUser ? <NavigationAuth authUser={authUser} /> : <NavigationNotAuth />
       }
     </AuthUserContext.Consumer>
   </div>
 );
 
-const NavigationAuth = () => (
+const NavigationAuth = ({ authUser }) => (
   <div >
     <button>
       <Link to={ROUTES.HOME}>Home</Link>
@@ -29,9 +30,11 @@ const NavigationAuth = () => (
     <button>
       <Link to={ROUTES.ACCOUNT}>Account</Link>
     </button>
-    <button>
-      <Link to={ROUTES.ADMIN}>Admin</Link>
-    </button>
+    {!!authUser.roles[ROLES.ADMIN] && (
+      <button>
+        <Link to={ROUTES.ADMIN}>Admin</Link>
+      </button>
+    )}
     <SignOutButton />
   </div>
 )

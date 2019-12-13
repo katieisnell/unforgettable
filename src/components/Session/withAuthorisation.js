@@ -11,12 +11,13 @@ import * as ROUTES from '../../constants/routes';
 const withAuthorisation = condition => Component => {
   class WithAuthorisation extends React.Component {
     componentDidMount() {
-      this.listener = this.props.firebase.auth.onAuthStateChanged(
+      this.listener = this.props.firebase.onAuthUserListener(
         authUser => {
           if (!condition(authUser)) {
             this.props.history.push(ROUTES.SIGN_IN);
           }
         },
+        () => this.props.history.push(ROUTES.SIGN_IN),
       );
     }
 
