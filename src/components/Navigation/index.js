@@ -19,7 +19,7 @@ const Navigation = () => (
 );
 
 const NavigationAuth = () => (
-  <div className="Navigation">
+  <div >
     <button>
       <Link to={ROUTES.HOME}>Home</Link>
     </button>
@@ -37,7 +37,7 @@ const NavigationAuth = () => (
 )
 
 const NavigationNotAuth = () => (
-  <div className="Navigation">
+  <div >
     <button>
       <Link to={ROUTES.HOME}>Home</Link>
     </button>
