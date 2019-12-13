@@ -15,10 +15,6 @@ class Dashboard extends React.Component {
       name: 'Unknown user'
     };
   }
-  
-  componentDidMount() {
-    console.log('componentDidMount');
-  }
 
   render() {
     const imageUrl = desktopImage;
@@ -59,7 +55,6 @@ class MessagesBase extends Component {
   };
 
   onCreateMessage = (event, authUser) => {
-    console.log('authUser is ' + authUser.username);
     this.props.firebase.messages().push({
       text: this.state.text,
       userId: authUser
@@ -77,19 +72,12 @@ class MessagesBase extends Component {
         const messageObject = snapshot.val();
 
         if (messageObject) {
-          // messageObject[key].text is the message text
-
-      
-
-
           // Convert message list from snapshot
           const messageList = Object.keys(messageObject).map(key => ({
             ...messageObject[key],
             uid: key,
           }));
 
-          console.log(messageList);
-  
           this.setState({
             messages: messageList,
             loading: false
