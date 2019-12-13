@@ -125,16 +125,6 @@ class SignUpFormBase extends Component {
           placeholder="Confirm Password"
         />
         <br/>
-        <label>
-          Admin
-          <input
-            name="isAdmin"
-            type="checkbox"
-            checked={isAdmin}
-            onChange={this.onChangeCheckbox}
-          />
-        </label>
-        <br/>
         <button disabled={isInvalid} type="submit">Sign Up</button>
         {error && <p>{error.message}</p>}
       </form>
