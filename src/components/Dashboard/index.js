@@ -64,6 +64,10 @@ class MessagesBase extends Component {
     event.preventDefault();
   };
 
+  onRemoveMessage = uid => {
+    this.props.firebase.message(uid).remove();
+  };
+
   componentDidMount() {
     this.setState({ loading: true });
 
@@ -107,7 +111,11 @@ class MessagesBase extends Component {
           <div>
             {loading && <div>Loading ...</div>}
             {messages ? (
-              <MessageList messages={messages} authUser={authUser}/>
+              <MessageList 
+                messages={messages} 
+                authUser={authUser}
+                onRemoveMessage={this.onRemoveMessage}
+              />
             ) : (
               <div>There are no messages ...</div>
             )}
@@ -127,17 +135,30 @@ class MessagesBase extends Component {
   }
 }
 
-const MessageList = ({ messages, authUser }) => (
+const MessageList = ({ messages, authUser, onRemoveMessage }) => (
   <ul>
     {messages.map(message => (
-      <MessageItem key={message.uid} message={message} authUser={authUser} />
+      <MessageItem 
+        key={message.uid} 
+        message={message} 
+        authUser={authUser} 
+        onRemoveMessage={onRemoveMessage}
+      />
     ))}
   </ul>
 );
 
-const MessageItem = ({ message, authUser }) => (
-  (message.userId.username === authUser.username) ? 
-    <SentMessageItem message={message} /> : <ReceivedMessageItem message={message} />
+const MessageItem = ({ message, authUser, onRemoveMessage }) => (
+  <div>
+    {message.userId.username === authUser.username ? 
+      <SentMessageItem message={message} /> : <ReceivedMessageItem message={message} />}
+      <button
+        type="button"
+        onClick={() => onRemoveMessage(message.uid)}
+      >
+        Delete
+      </button>
+  </div>
 );
 
 const SentMessageItem = ({ message }) => (
