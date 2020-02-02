@@ -15,7 +15,7 @@ const config = {
 
 class Firebase {
   constructor() {
-    console.log(config.apiKey);
+    // console.log(config.apiKey);
 
     app.initializeApp(config);
     this.auth = app.auth();
@@ -68,6 +68,11 @@ class Firebase {
   user = uid => this.db.ref(`users/${uid}`);
   
   users = () => this.db.ref('users');
+
+  // Moments API
+  moment = uid => this.db.ref(`moments/${uid}`);
+
+  moments = () => this.db.ref('moments');
 }
 
 export default Firebase;
