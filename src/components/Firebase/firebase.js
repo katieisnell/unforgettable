@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import 'firebase/storage';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -20,6 +21,7 @@ class Firebase {
     app.initializeApp(config);
     this.auth = app.auth();
     this.db = app.database();
+    this.storage = app.storage();
   }
 
   // Authentication API
@@ -73,6 +75,9 @@ class Firebase {
   moment = uid => this.db.ref(`moments/${uid}`);
 
   moments = () => this.db.ref('moments');
+
+  storageRef = () => this.storage().ref();
+
 }
 
 export default Firebase;
