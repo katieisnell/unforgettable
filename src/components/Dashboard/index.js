@@ -57,7 +57,6 @@ class MomentsBase extends React.Component {
     super(props);
     this.state = {
       loading: false,
-      progress: 0,
       moments: null
     };
     this.fileInput = React.createRef();
@@ -150,7 +149,7 @@ class MomentsBase extends React.Component {
   };
 
   render() {
-    const { moments, loading, progress } = this.state;
+    const { moments, loading } = this.state;
     console.log(moments);
     return (
       <AuthUserContext.Consumer>
