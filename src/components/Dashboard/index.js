@@ -60,6 +60,7 @@ class MomentsBase extends React.Component {
       moments: null
     };
     this.fileInput = React.createRef();
+    this.onCreateMoment = this.onCreateMoment.bind(this);
   }
 
   componentDidMount() {
@@ -94,6 +95,7 @@ class MomentsBase extends React.Component {
 
     // Create a storage reference from our storage service
     var storageRef = this.props.firebase.storage.ref();
+    var momentsRef = this.props.firebase.moments();
 
     var file = this.fileInput.current.files[0];
 
@@ -142,7 +144,12 @@ class MomentsBase extends React.Component {
         // Upload completed successfully, now we can get the download URL
         uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
           console.log('File available at', downloadURL);
+          
           // TODO: Add code to connect images to user database
+          momentsRef.push({
+            photo_url: downloadURL,
+            user_id: authUser.uid,
+          });
 
         });
       });
@@ -150,7 +157,7 @@ class MomentsBase extends React.Component {
 
   render() {
     const { moments, loading } = this.state;
-    console.log(moments);
+    console.log('moments', moments);
     return (
       <AuthUserContext.Consumer>
         {authUser => (
@@ -185,7 +192,7 @@ const MomentList = ({ moments }) => (
 
 const MomentItem = ({ moment }) => (
   <li>
-    <strong>{moment.userId}</strong> {moment.image}
+    <strong>{moment.user_id}</strong> <img src={moment.photo_url} alt={moment.uid}/>
   </li>
 );
 
