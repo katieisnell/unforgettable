@@ -1,11 +1,10 @@
 import React from 'react';
 
 import '../App/App.css';
-import logo from '../../assets/logo.png'
+import './Dashboard.css';
 import desktopImage from '../../assets/paper-desktop.jpg';
 
 import { 
-  FirebaseContext, 
   withFirebase 
 } from '../Firebase';
 
@@ -21,10 +20,6 @@ class Dashboard extends React.Component {
       name: 'Unknown user'
     };
   }
-  
-  componentDidMount() {
-    console.log('componentDidMount');
-  }
 
   render() {
     const imageUrl = desktopImage;
@@ -32,17 +27,10 @@ class Dashboard extends React.Component {
     return (
       <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
         <div className="App-content">
-          <a href='/'>
-            <img src={logo} className="App-logo" alt="logo" />
-          </a>
           <div className='App-header'>
             <h1>Dashboard</h1>
-            <FirebaseContext.Consumer>
-              {firebase => {
-                // return <div>The Dashboard is accessible to every signed in user, congrats <span role="img" aria-label="content-face">😌</span></div>;
-              }}
-            </FirebaseContext.Consumer>
-
+          </div>
+          <div className='Moments-content'>
             <Moments />
           </div>
         </div>
@@ -50,7 +38,6 @@ class Dashboard extends React.Component {
     );
   }
 }
-
 
 class MomentsBase extends React.Component {
   constructor(props) {
@@ -94,70 +81,36 @@ class MomentsBase extends React.Component {
     event.preventDefault();
 
     // Create a storage reference from our storage service
-    var storageRef = this.props.firebase.storage.ref();
-    var momentsRef = this.props.firebase.moments();
+    const storageRef = this.props.firebase.storage.ref();
+    const momentsRef = this.props.firebase.moments();
 
-    var file = this.fileInput.current.files[0];
+    const noOfFiles = this.fileInput.current.files.length;
+    
+    for (var i = 0; i < noOfFiles; i++) {
+      var file = this.fileInput.current.files[i];
 
-    var metadata = {
-      contentType: 'image/jpeg'
-    };
+      var metadata = {
+        contentType: 'image/jpeg'
+      };
 
-    var uploadTask = storageRef.child('moments/' + file.name).put(file, metadata);
+      storageRef
+          .child(`moments/${file.name}`)
+          .put(file, metadata).then((snapshot) => {   
+            snapshot.ref.getDownloadURL().then(function(downloadURL) {
+              console.log('Download url', downloadURL)
 
-    uploadTask.on('state_changed',
-      function(snapshot) {
-        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is ' + progress + '% done');
-
-        switch (snapshot.state) {
-          case 'paused': // or 'paused'
-            console.log('Upload is paused');
-            break;
-          case 'running': // or 'running'
-            console.log('Upload is running');
-            break;
-          default:
-            break;
-        }
-      }, function(error) {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-          case 'storage/unauthorized':
-            // User doesn't have permission to access the object
-            console.log('Unauthorised user');
-            break;
-
-          case 'storage/canceled':
-            // User canceled the upload
-            break;
-
-          case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
-            console.log('Unknown error occured 😢');
-            break;
-          default:
-            break;
-        }
-      }, function() {
-        // Upload completed successfully, now we can get the download URL
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-          console.log('File available at', downloadURL);
-          
-          // TODO: Add code to connect images to user database
-          momentsRef.push({
-            photo_url: downloadURL,
-            user_id: authUser.uid,
-          });
-
-        });
-      });
-  };
+            // Connects images to user in database
+            momentsRef.push({
+              photo_url: downloadURL,
+              uid: authUser.uid,
+            });
+        })
+      })
+    }
+  }
 
   render() {
     const { moments, loading } = this.state;
-    console.log('moments', moments);
     return (
       <AuthUserContext.Consumer>
         {authUser => (
@@ -169,11 +122,13 @@ class MomentsBase extends React.Component {
             ) : (
               <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
             )}
-            
-            <form onSubmit={event => this.onCreateMoment(event, authUser)}>
-              <input type='file' ref={this.fileInput} />
-              <button type='submit'>Upload</button>
-            </form>
+
+            <div>
+              <form onSubmit={event => this.onCreateMoment(event, authUser)}>
+                <input type='file' ref={this.fileInput} multiple/>
+                <button type='submit'>Upload</button>
+              </form>
+            </div>
 
           </div>
         )}
@@ -183,17 +138,17 @@ class MomentsBase extends React.Component {
 }
 
 const MomentList = ({ moments }) => (
-  <ul>
+  <div className='moments'>
     {moments.map(moment => (
       <MomentItem key={moment.uid} moment={moment} />
     ))}
-  </ul>
+  </div>
 );
 
 const MomentItem = ({ moment }) => (
-  <li>
-    <strong>{moment.user_id}</strong> <img src={moment.photo_url} alt={moment.uid}/>
-  </li>
+  <div className='moments-item'>
+    <img src={moment.photo_url} alt={moment.uid} className='moment-image'/>
+  </div>
 );
 
 const Moments = withFirebase(MomentsBase);
