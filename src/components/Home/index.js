@@ -4,6 +4,8 @@ import '../App/App.css';
 import logo from '../../assets/logo.png'
 import desktopImage from '../../assets/paper-desktop.jpg';
 
+import Tape from '../Tape';
+
 class Landing extends React.Component {
   render() {
     const imageUrl = desktopImage;
@@ -14,7 +16,7 @@ class Landing extends React.Component {
             <img src={logo} className="App-logo" alt="logo" />
           </a>
           <div className='App-header'>
-            <h1>#unforgettable</h1>
+            <Tape text={'#unforgettable'}/>
           </div>
         </div>
       </div>

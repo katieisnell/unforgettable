@@ -4,6 +4,8 @@ import '../App/App.css';
 import logo from '../../assets/logo.png'
 import desktopImage from '../../assets/paper-desktop.jpg';
 
+import Tape from '../Tape';
+
 import { AuthUserContext, withAuthorisation } from '../Session';
 
 const imageUrl = desktopImage;
@@ -17,7 +19,7 @@ const AccountPage = () => (
             <img src={logo} className="App-logo" alt="logo" />
           </a>
           <div className='App-header'>
-            <h1>Your Account</h1>
+            <Tape text={'Your Account'}/>
             <p>Welcome {authUser.email}</p>
           </div>
         </div>

@@ -4,6 +4,8 @@ import '../App/App.css';
 import logo from '../../assets/logo.png'
 import desktopImage from '../../assets/paper-desktop.jpg';
 
+import Tape from '../Tape';
+
 import  { FirebaseContext } from '../Firebase';
 import { withAuthorisation } from '../Session';
 
@@ -29,7 +31,7 @@ class Dashboard extends React.Component {
             <img src={logo} className="App-logo" alt="logo" />
           </a>
           <div className='App-header'>
-            <h1>Dashboard</h1>
+            <Tape text={'Dashboard'}/>
             <FirebaseContext.Consumer>
               {firebase => {
                 return <div>The Dashboard is accessible to every signed in user, congrats <span role="img" aria-label="content-face">😌</span></div>;
