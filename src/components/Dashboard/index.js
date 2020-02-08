@@ -4,6 +4,8 @@ import '../App/App.css';
 import './Dashboard.css';
 import desktopImage from '../../assets/paper-desktop.jpg';
 
+import Tape from '../Tape';
+
 import { 
   withFirebase 
 } from '../Firebase';
@@ -28,7 +30,7 @@ class Dashboard extends React.Component {
       <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
         <div className="App-content">
           <div className='App-header'>
-            <h1>Dashboard</h1>
+            <Tape text={'Dashboard'}/>
           </div>
           <div className='Moments-content'>
             <Moments />

@@ -31,6 +31,14 @@
   align-items: center;
 }
 
+h1 {
+  font-family: 'Walter Turncoat', cursive;
+}
+
+body {
+  font-family: 'Coming Soon', cursive;
+}
+
 @media (min-width: 650px ) {
   .App {
       background-position: center center;

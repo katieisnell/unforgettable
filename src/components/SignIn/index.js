@@ -5,6 +5,8 @@ import { compose } from 'recompose';
 import '../App/App.css';
 import desktopImage from '../../assets/paper-desktop.jpg';
 
+import Tape from '../Tape';
+
 import { SignUpLink } from '../SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
@@ -15,7 +17,7 @@ const SignInPage = () => (
   <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
     <div className="App-content">
       <div className='App-header'>
-        <h1>Sign In</h1>
+        <Tape text={'Sign In'}/>
         <SignInForm />
         <SignUpLink />
       </div>
