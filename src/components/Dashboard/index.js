@@ -46,10 +46,12 @@ class MomentsBase extends React.Component {
     super(props);
     this.state = {
       loading: false,
-      moments: null
+      moments: null,
+      visionResponse: ""
     };
     this.fileInput = React.createRef();
     this.onCreateMoment = this.onCreateMoment.bind(this);
+    this.onCreateLabels = this.onCreateLabels.bind(this);
   }
 
   componentDidMount() {
@@ -101,14 +103,44 @@ class MomentsBase extends React.Component {
             snapshot.ref.getDownloadURL().then(function(downloadURL) {
               console.log('Download url', downloadURL)
 
-            // Connects images to user in database
-            momentsRef.push({
-              photo_url: downloadURL,
-              uid: authUser.uid,
-            });
+              // Connects images to user in database
+              momentsRef.push({
+                photo_url: downloadURL,
+                uid: authUser.uid
+              });
         })
       })
     }
+  }
+
+  onCreateLabels(moments) {
+    const noOfPhotos = moments.length;
+
+    for (var i = 0; i < noOfPhotos; i++) {
+      var photo_url = moments[i].photo_url;
+      console.log('moment photo_url currently analysing', photo_url);
+
+      this.callVision(photo_url);
+    }
+  }
+
+  callVision(photo_url) {
+    var parameters = {
+      'photo_url': photo_url
+    };
+
+    fetch("http://localhost:9000/vision/", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(parameters)
+    })
+      .then(res => res.text())
+      .then(res => this.setState({ visionResponse: res }))
+      .catch(err => err);
+    
   }
 
   render() {
@@ -119,18 +151,23 @@ class MomentsBase extends React.Component {
           <div>
             {loading && <div>Loading ...</div>}
 
-            {moments ? (
-              <MomentList moments={moments} />
-            ) : (
-              <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
-            )}
-
             <div>
               <form onSubmit={event => this.onCreateMoment(event, authUser)}>
                 <input type='file' ref={this.fileInput} multiple/>
                 <button type='submit'>Upload</button>
               </form>
             </div>
+
+            <button onClick={(e) => this.onCreateLabels(moments, e)}>Generate labels</button>
+            <p>Vision response <br/>{this.state.visionResponse}</p>
+
+            {moments ? (
+              <div>
+                <MomentList moments={moments} />
+              </div>
+            ) : (
+              <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
+            )}
 
           </div>
         )}
