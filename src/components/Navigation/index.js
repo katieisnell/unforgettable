@@ -20,7 +20,7 @@ const Navigation = () => (
 );
 
 const NavigationAuth = ({ authUser }) => (
-  <div >
+  <div>
     <button>
       <Link to={ROUTES.HOME}>Home</Link>
     </button>
@@ -40,7 +40,7 @@ const NavigationAuth = ({ authUser }) => (
 )
 
 const NavigationNotAuth = () => (
-  <div >
+  <div>
     <button>
       <Link to={ROUTES.HOME}>Home</Link>
     </button>

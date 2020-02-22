@@ -1,9 +1,9 @@
 .App {
   text-align: center;
-  height: 100vh;
   background-size: cover;
   background-repeat: repeat;
   background-position: top center;
+  background-color: #f3ecec;
 }
 
 .App-logo {
@@ -14,8 +14,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-end;
-  padding-right: 80px;
+  align-items: center;
 }
 
 .App-content {
@@ -27,10 +26,23 @@
 }
 
 .Navigation {
+  padding: 5px;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
+  background-color: #ffffff;
+  border-style: none none solid none;
+  border-width: 1px;
+  border-color: lightgrey;
+}
+
+h1 {
+  font-family: 'Walter Turncoat', cursive;
+}
+
+body {
+  font-family: 'Coming Soon', cursive;
 }
 
 @media (min-width: 650px ) {
@@ -39,7 +51,7 @@
   }
 
   .App-content {
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
   }
 }
