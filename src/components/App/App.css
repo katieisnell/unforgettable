@@ -3,6 +3,7 @@
   background-size: cover;
   background-repeat: repeat;
   background-position: top center;
+  background-color: #f3ecec;
 }
 
 .App-logo {
@@ -25,10 +26,15 @@
 }
 
 .Navigation {
+  padding: 5px;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
+  background-color: #ffffff;
+  border-style: none none solid none;
+  border-width: 1px;
+  border-color: lightgrey;
 }
 
 h1 {

@@ -2,7 +2,6 @@ import React from 'react';
 
 import '../App/App.css';
 import './Dashboard.css';
-import desktopImage from '../../assets/paper-desktop.jpg';
 
 import Tape from '../Tape';
 
@@ -16,18 +15,9 @@ import {
 } from '../Session';
 
 class Dashboard extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      name: 'Unknown user'
-    };
-  }
-
   render() {
-    const imageUrl = desktopImage;
-
     return (
-      <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
+      <div className="App">
         <div className="App-content">
           <div className='App-header'>
             <Tape text={'Dashboard'}/>
@@ -45,9 +35,12 @@ class MomentsBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentUser: 'Unknown user',
       loading: false,
       moments: null,
-      visionResponse: ""
+      visionResponse: null,
+      accessToken: null,
+      instaMedia: null
     };
     this.fileInput = React.createRef();
     this.onCreateMoment = this.onCreateMoment.bind(this);
@@ -57,7 +50,16 @@ class MomentsBase extends React.Component {
   componentDidMount() {
     this.setState({ loading: true });
 
-    this.props.firebase.moments().on('value', snapshot => {
+    var userId = this.props.firebase.auth.currentUser.uid;
+    this.setState({ currentUser: userId });
+
+    this.props.firebase.users().on('value', snapshot => {
+      this.setState({
+        accessToken: snapshot.val()[userId].access_token
+      });
+    });
+
+    this.props.firebase.moments().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
       const momentObject = snapshot.val();
 
       if (momentObject) {
@@ -72,7 +74,27 @@ class MomentsBase extends React.Component {
           loading: false 
         });
       } else {
-        this.setState({ moments: null, loading: false });
+        fetch(`https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=${encodeURIComponent(this.state.accessToken)}`, {
+          method: 'GET',
+        })
+        .then(response => {
+          if (response.ok) {
+                  return response;
+          } else {
+              let errorMessage = `${response.statusText}`,
+              error = new Error(errorMessage);
+              throw(error);
+          }
+        })
+        .then(response => response.json())
+        .then(json => {
+          this.setState({ 
+            instaMedia: json.data,
+            loading: false 
+          });
+          console.log('Data fetched from Instagram successfully');
+          this.onCreateMoment(userId, json.data);
+        });
       }
     });
   }
@@ -81,44 +103,30 @@ class MomentsBase extends React.Component {
     this.props.firebase.moments().off();
   }
 
-  onCreateMoment = (event, authUser) => {
-    event.preventDefault();
-
+  onCreateMoment = (userId, instaMedia) => {
     // Create a storage reference from our storage service
-    const storageRef = this.props.firebase.storage.ref();
     const momentsRef = this.props.firebase.moments();
-
-    const noOfFiles = this.fileInput.current.files.length;
     
-    for (var i = 0; i < noOfFiles; i++) {
-      var file = this.fileInput.current.files[i];
+    for (var i = 0; i < instaMedia.length; i++) {
+      const file = instaMedia[i];
 
-      var metadata = {
-        contentType: 'image/jpeg'
-      };
-
-      storageRef
-          .child(`moments/${file.name}`)
-          .put(file, metadata).then((snapshot) => {   
-            snapshot.ref.getDownloadURL().then(function(downloadURL) {
-              console.log('Download url', downloadURL)
-
-              // Connects images to user in database
-              momentsRef.push({
-                photo_url: downloadURL,
-                uid: authUser.uid
-              });
-        })
-      })
+      // Connects images to user in database
+      momentsRef.push({
+        media_id: file.id,
+        user_id: userId,
+        caption: file.caption,
+        media_type: file.media_type,
+        media_url: file.media_url,
+        permalink: file.permalink,
+        timestamp: file.timestamp
+      });
     }
   }
 
   onCreateLabels(moments) {
-    const noOfPhotos = moments.length;
-
-    for (var i = 0; i < noOfPhotos; i++) {
-      var photo_url = moments[i].photo_url;
-      console.log('moment photo_url currently analysing', photo_url);
+    for (var i = 0; i < moments.length; i++) {
+      var photo_url = moments[i].media_url;
+      console.log('Vision API is currently analysing', i, photo_url);
 
       this.callVision(photo_url);
     }
@@ -140,36 +148,33 @@ class MomentsBase extends React.Component {
       .then(res => res.text())
       .then(res => this.setState({ visionResponse: res }))
       .catch(err => err);
-    
   }
 
   render() {
-    const { moments, loading } = this.state;
+    const { moments, loading, visionResponse } = this.state;
+
     return (
       <AuthUserContext.Consumer>
         {authUser => (
-          <div>
-            {loading && <div>Loading ...</div>}
+	      <div className="container">
 
-            <div>
-              <form onSubmit={event => this.onCreateMoment(event, authUser)}>
-                <input type='file' ref={this.fileInput} multiple/>
-                <button type='submit'>Upload</button>
-              </form>
-            </div>
-
-            <button onClick={(e) => this.onCreateLabels(moments, e)}>Generate labels</button>
+          <button onClick={(e) => this.onCreateLabels(moments, e)}>Generate labels</button>
+          {visionResponse != null && (
             <p>Vision response <br/>{this.state.visionResponse}</p>
+          )}
+          
+          {loading && <div>Loading ...</div>}
 
-            {moments ? (
-              <div>
-                <MomentList moments={moments} />
-              </div>
-            ) : (
-              <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
-            )}
+          {moments != null ? (
+            <div>
+              <p>You have moments!</p>
+              <MomentList moments={this.state.moments} />
+            </div>
+          ) : (
+            <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
+          )}
 
-          </div>
+        </div>
         )}
       </AuthUserContext.Consumer>
     );
@@ -177,16 +182,23 @@ class MomentsBase extends React.Component {
 }
 
 const MomentList = ({ moments }) => (
-  <div className='moments'>
-    {moments.map(moment => (
-      <MomentItem key={moment.uid} moment={moment} />
+  <div className="moments">
+  {moments.map(moment => (
+      <MomentItem key={moment.media_id} moment={moment} />
     ))}
   </div>
 );
 
 const MomentItem = ({ moment }) => (
-  <div className='moments-item'>
-    <img src={moment.photo_url} alt={moment.uid} className='moment-image'/>
+  <div className="moments-item" tabIndex="0">
+    <img src={moment.media_url} alt={moment.id} className="moments-image"/>
+
+    <div className="moments-item-info">
+      <ul>
+        <li className="moments-item-captions">{moment.caption}</li>
+        <li className="moments-item-timestamps">Uploaded on {new Date(moment.timestamp).toLocaleDateString()}</li>
+      </ul>
+    </div>
   </div>
 );
 

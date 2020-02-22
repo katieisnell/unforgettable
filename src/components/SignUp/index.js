@@ -3,7 +3,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import '../App/App.css';
-import desktopImage from '../../assets/paper-desktop.jpg';
 
 import Tape from '../Tape';
 
@@ -11,10 +10,8 @@ import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
 
-const imageUrl = desktopImage;
-
 const SignUpPage = () => (
-  <div className="App" style={{backgroundImage: `url(${imageUrl})` }}>
+  <div className="App">
     <div className="App-content">
       <div className='App-header'>
         <Tape text={'Sign Up'}/>
