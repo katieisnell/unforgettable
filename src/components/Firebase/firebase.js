@@ -76,6 +76,11 @@ class Firebase {
 
   moments = () => this.db.ref('moments');
 
+  // Moments API
+  userUploaderMoment = uid => this.db.ref(`userUploaderMoments/${uid}`);
+
+  userUploaderMoments = () => this.db.ref('userUploaderMoments');
+
   storageRef = () => this.storage().ref();
 
 }

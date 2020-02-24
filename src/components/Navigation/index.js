@@ -28,6 +28,9 @@ const NavigationAuth = ({ authUser }) => (
       <Link to={ROUTES.DASHBOARD}>Dashboard</Link>
     </button>
     <button>
+      <Link to={ROUTES.USER_UPLOADED_DASHBOARD}>Your uploaded Moments</Link>
+    </button>
+    <button>
       <Link to={ROUTES.ACCOUNT}>Account</Link>
     </button>
     {!!authUser.roles[ROLES.ADMIN] && (
