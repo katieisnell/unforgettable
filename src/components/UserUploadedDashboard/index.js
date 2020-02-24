@@ -97,10 +97,10 @@ class MomentsBase extends React.Component {
       const currentTime = (new Date()).getTime();
 
       storageRef
-          .child(`userUploadedMoments/${file.name}`)
+          .child(`userUploadedMoments/${authUser.uid}/${file.name}`)
           .put(file, metadata).then((snapshot) => {   
             snapshot.ref.getDownloadURL().then(function(downloadURL) {
-              console.log('Download url', downloadURL)
+              // console.log('Download url', downloadURL)
 
               // Connects images to user in database
               momentsRef.push({
