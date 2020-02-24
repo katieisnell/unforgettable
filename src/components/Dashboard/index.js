@@ -14,6 +14,8 @@ import {
   withAuthorisation 
 } from '../Session';
 
+const INSTA_UPLOADED = 'INSTA_UPLOADED';
+
 class Dashboard extends React.Component {
   render() {
     return (
@@ -106,7 +108,7 @@ class MomentsBase extends React.Component {
   onCreateMoment = (userId, instaMedia) => {
     // Create a storage reference from our storage service
     const momentsRef = this.props.firebase.moments();
-    
+
     for (var i = 0; i < instaMedia.length; i++) {
       const file = instaMedia[i];
 
@@ -118,7 +120,8 @@ class MomentsBase extends React.Component {
         media_type: file.media_type,
         media_url: file.media_url,
         permalink: file.permalink,
-        timestamp: file.timestamp
+        timestamp: file.timestamp,
+        content_origin: INSTA_UPLOADED
       });
     }
   }
