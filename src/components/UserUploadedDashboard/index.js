@@ -150,7 +150,7 @@ class MomentsBase extends React.Component {
             <p>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           )}
 
-          <div>
+          <div className='file-upload'>
             <p>Select some files below to upload...</p>
             <form onSubmit={event => this.onCreateMoment(event, authUser)}>
               <input type='file' ref={this.fileInput} multiple/>
