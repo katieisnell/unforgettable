@@ -14,7 +14,7 @@ const AccountPage = () => (
           <div className='App-header'>
             <Tape text={'Your Account'}/>
           </div>
-          <p>Welcome {authUser.email}</p>
+          <p>Welcome {authUser.username} <span role='img' aria-label='wave'>👋</span></p>
         </div>
       </div>
     )}

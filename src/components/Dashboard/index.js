@@ -22,7 +22,7 @@ class Dashboard extends React.Component {
       <div className="App">
         <div className="App-content">
           <div className='App-header'>
-            <Tape text={'Dashboard'}/>
+            <Tape text={'Instagram Media'}/>
           </div>
           <div className='Moments-content'>
             <Moments />
@@ -40,13 +40,10 @@ class MomentsBase extends React.Component {
       currentUser: 'Unknown user',
       loading: false,
       moments: null,
-      visionResponse: null,
       accessToken: null,
       instaMedia: null
     };
-    this.fileInput = React.createRef();
     this.onCreateMoment = this.onCreateMoment.bind(this);
-    this.onCreateLabels = this.onCreateLabels.bind(this);
   }
 
   componentDidMount() {
@@ -75,17 +72,17 @@ class MomentsBase extends React.Component {
           moments: momentList,
           loading: false 
         });
-      } else {
+      } else if (this.state.access_token) {
         fetch(`https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=${encodeURIComponent(this.state.accessToken)}`, {
           method: 'GET',
         })
         .then(response => {
           if (response.ok) {
-                  return response;
+            return response;
           } else {
-              let errorMessage = `${response.statusText}`,
-              error = new Error(errorMessage);
-              throw(error);
+            let errorMessage = `${response.statusText}`,
+            error = new Error(errorMessage);
+            throw(error);
           }
         })
         .then(response => response.json())
@@ -96,6 +93,10 @@ class MomentsBase extends React.Component {
           });
           console.log('Data fetched from Instagram successfully');
           this.onCreateMoment(userId, json.data);
+        });
+      } else {
+        this.setState({ 
+          loading: false 
         });
       }
     });
@@ -126,55 +127,22 @@ class MomentsBase extends React.Component {
     }
   }
 
-  onCreateLabels(moments) {
-    for (var i = 0; i < moments.length; i++) {
-      var photo_url = moments[i].media_url;
-      console.log('Vision API is currently analysing', i, photo_url);
-
-      this.callVision(photo_url);
-    }
-  }
-
-  callVision(photo_url) {
-    var parameters = {
-      'photo_url': photo_url
-    };
-
-    fetch("http://localhost:9000/vision/", {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(parameters)
-    })
-      .then(res => res.text())
-      .then(res => this.setState({ visionResponse: res }))
-      .catch(err => err);
-  }
-
   render() {
-    const { moments, loading, visionResponse } = this.state;
+    const { moments, loading } = this.state;
 
     return (
       <AuthUserContext.Consumer>
         {authUser => (
-	      <div className="container">
-
-          <button onClick={(e) => this.onCreateLabels(moments, e)}>Generate labels</button>
-          {visionResponse != null && (
-            <p>Vision response <br/>{this.state.visionResponse}</p>
-          )}
-          
-          {loading && <div>Loading ...</div>}
+	      <div className="container">     
+          {loading && <p>Loading ...</p>}
 
           {moments != null ? (
             <div>
-              <p>You have moments!</p>
+              <p>Here is your media from Instagram!</p>
               <MomentList moments={this.state.moments} />
             </div>
           ) : (
-            <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
+            <p>You have no Instagram media <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           )}
 
         </div>

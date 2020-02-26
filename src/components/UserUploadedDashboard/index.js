@@ -4,6 +4,7 @@ import '../App/App.css';
 import './UserUploadedDashboard.css';
 
 import Tape from '../Tape';
+import LabelCloud from '../LabelCloud';
 
 import { 
   withFirebase 
@@ -22,7 +23,7 @@ class UserUploadedDashboard extends React.Component {
       <div className="App">
         <div className="App-content">
           <div className='App-header'>
-            <Tape text={'Uploaded moments'}/>
+            <Tape text={'User Moments'}/>
           </div>
           <div className='Moments-content'>
             <Moments />
@@ -40,9 +41,7 @@ class MomentsBase extends React.Component {
       currentUser: 'Unknown user',
       loading: false,
       moments: null,
-      visionResponse: null,
-      accessToken: null,
-      instaMedia: null
+      labelCloud: null
     };
     this.fileInput = React.createRef();
     this.onCreateMoment = this.onCreateMoment.bind(this);
@@ -72,10 +71,26 @@ class MomentsBase extends React.Component {
         loading: false 
       });
     });
+
+    this.props.firebase.users().on('value', snapshot => {
+      const labelCloud = snapshot.val()[userId].label_cloud;
+
+      if (labelCloud) {
+        let data = [];
+        Object.values(labelCloud['_data']).forEach(label => {
+          data.push({ value: label[0], count: label[1]})
+        })
+
+        this.setState({
+          labelCloud: data
+        });
+      }
+    });
   }
 
   componentWillUnmount() {
     this.props.firebase.userUploadedMoments().off();
+    this.props.firebase.users().off();
   }
 
   onCreateMoment = (event, authUser) => {
@@ -115,30 +130,33 @@ class MomentsBase extends React.Component {
   }
 
   render() {
-    const { moments, loading } = this.state;
-
+    const { moments, loading, labelCloud } = this.state;
+    
     return (
       <AuthUserContext.Consumer>
         {authUser => (
 	      <div className="container">
+          {loading && <p>Loading ...</p>}
 
-          <div>
+          {labelCloud && (              
+            <LabelCloud data={labelCloud}/>
+          )}
+
+          {moments != null ? (
+            <div>
+              <MomentList moments={this.state.moments} />
+            </div>
+          ) : (
+            <p>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+          )}
+
+          <div className='file-upload'>
+            <p>Select some files below to upload...</p>
             <form onSubmit={event => this.onCreateMoment(event, authUser)}>
               <input type='file' ref={this.fileInput} multiple/>
               <button type='submit'>Upload</button>
             </form>
           </div>
-          
-          {loading && <div>Loading ...</div>}
-
-          {moments != null ? (
-            <div>
-              <p>You have moments!</p>
-              <MomentList moments={this.state.moments} />
-            </div>
-          ) : (
-            <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
-          )}
 
         </div>
         )}
@@ -161,7 +179,15 @@ const MomentItem = ({ moment }) => (
 
     <div className="moments-item-info">
       <ul>
-        {moment.labels && moment.labels[0].labelAnnotations.map((element) => <li key={element.description} className="moments-item-captions">{element.description}</li>)}
+        {moment.labels != null ? (
+          moment.labels[0].labelAnnotations.map((element) => <li key={element.mid} className="moments-item-captions">{element.description}</li>)
+        ) : (
+          <li className="moments-item-captions">Labels loading...</li>
+        )}
+        {moment.faces && (
+          moment.faces.faceAnnotations.map((element) => 
+          <li key={element} className="moments-item-captions"><span role='img' aria-label='joy'>😄</span> ({element.joyLikelihood}) <span role='img' aria-label='anger'>😠</span> ({element.angerLikelihood}) <span role='img' aria-label='sorrow'>😢</span> ({element.sorrowLikelihood}) <span role='img' aria-label='surprise'>😲</span> ({element.surpriseLikelihood})</li>)
+        )}
         <li className="moments-item-timestamps">Uploaded on {new Date(moment.timestamp).toLocaleDateString()}</li>
       </ul>
     </div>
