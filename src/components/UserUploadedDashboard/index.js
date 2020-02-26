@@ -4,6 +4,7 @@ import '../App/App.css';
 import './UserUploadedDashboard.css';
 
 import Tape from '../Tape';
+import LabelCloud from '../LabelCloud';
 
 import { 
   withFirebase 
@@ -75,8 +76,13 @@ class MomentsBase extends React.Component {
       const labelCloud = snapshot.val()[userId].label_cloud;
 
       if (labelCloud) {
+        let data = [];
+        Object.values(labelCloud['_data']).forEach(label => {
+          data.push({ value: label[0], count: label[1]})
+        })
+
         this.setState({
-          labelCloud: snapshot.val()[userId].label_cloud
+          labelCloud: data
         });
       }
     });
@@ -140,12 +146,8 @@ class MomentsBase extends React.Component {
           
           {loading && <div>Loading ...</div>}
 
-          {labelCloud && (
-            <div>
-              {Object.entries(labelCloud['_data']).map(([key, value]) => (
-                <li>{value[0]}({value[1]})</li>
-              ))}
-            </div>
+          {labelCloud && (              
+            <LabelCloud data={labelCloud}/>
           )}
 
           {moments != null ? (
