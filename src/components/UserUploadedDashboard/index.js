@@ -136,7 +136,7 @@ class MomentsBase extends React.Component {
       <AuthUserContext.Consumer>
         {authUser => (
 	      <div className="container">
-          {loading && <div>Loading ...</div>}
+          {loading && <p>Loading ...</p>}
 
           {labelCloud && (              
             <LabelCloud data={labelCloud}/>
@@ -147,7 +147,7 @@ class MomentsBase extends React.Component {
               <MomentList moments={this.state.moments} />
             </div>
           ) : (
-            <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
+            <p>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           )}
 
           <div>

@@ -72,17 +72,17 @@ class MomentsBase extends React.Component {
           moments: momentList,
           loading: false 
         });
-      } else {
+      } else if (this.state.access_token) {
         fetch(`https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=${encodeURIComponent(this.state.accessToken)}`, {
           method: 'GET',
         })
         .then(response => {
           if (response.ok) {
-                  return response;
+            return response;
           } else {
-              let errorMessage = `${response.statusText}`,
-              error = new Error(errorMessage);
-              throw(error);
+            let errorMessage = `${response.statusText}`,
+            error = new Error(errorMessage);
+            throw(error);
           }
         })
         .then(response => response.json())
@@ -93,6 +93,10 @@ class MomentsBase extends React.Component {
           });
           console.log('Data fetched from Instagram successfully');
           this.onCreateMoment(userId, json.data);
+        });
+      } else {
+        this.setState({ 
+          loading: false 
         });
       }
     });
@@ -130,15 +134,15 @@ class MomentsBase extends React.Component {
       <AuthUserContext.Consumer>
         {authUser => (
 	      <div className="container">     
-          {loading && <div>Loading ...</div>}
+          {loading && <p>Loading ...</p>}
 
           {moments != null ? (
             <div>
-              <p>Here are you moments from Instagram!</p>
+              <p>Here is your media from Instagram!</p>
               <MomentList moments={this.state.moments} />
             </div>
           ) : (
-            <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
+            <p>You have no Instagram media <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           )}
 
         </div>
