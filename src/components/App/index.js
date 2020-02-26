@@ -8,6 +8,7 @@ import { withAuthentication } from '../Session';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import DashboardPage from '../Dashboard';
+import UserUploadedDashboardPage from '../UserUploadedDashboard';
 import HomePage from '../Home';
 import Navigation from '../Navigation';
 import NotFoundPage from '../NotFound';
@@ -26,6 +27,7 @@ const App = () => (
       <Route path={ROUTES.SIGN_IN} component={SignInPage} />
       {/* <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} /> */}
       <Route path={ROUTES.DASHBOARD} component={DashboardPage} />
+      <Route path={ROUTES.USER_UPLOADED_DASHBOARD} component={UserUploadedDashboardPage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.ADMIN} component={AdminPage} />
       <Route component={NotFoundPage} />

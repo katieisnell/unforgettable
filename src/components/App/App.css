@@ -41,8 +41,9 @@ h1 {
   font-family: 'Walter Turncoat', cursive;
 }
 
-body {
-  font-family: 'Coming Soon', cursive;
+p {
+  font-family: 'Raleway';
+  font-size: 16px;
 }
 
 @media (min-width: 650px ) {

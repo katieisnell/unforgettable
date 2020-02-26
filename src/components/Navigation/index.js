@@ -25,7 +25,10 @@ const NavigationAuth = ({ authUser }) => (
       <Link to={ROUTES.HOME}>Home</Link>
     </button>
     <button>
-      <Link to={ROUTES.DASHBOARD}>Dashboard</Link>
+      <Link to={ROUTES.USER_UPLOADED_DASHBOARD}>User Moments</Link>
+    </button>
+    <button>
+      <Link to={ROUTES.DASHBOARD}>Instagram Media</Link>
     </button>
     <button>
       <Link to={ROUTES.ACCOUNT}>Account</Link>

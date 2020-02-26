@@ -27,6 +27,10 @@ img {
   padding: 0 2rem;
 }
 
+.file-upload {
+  padding: 2rem;
+}
+
 .btn {
   display: inline-block;
   font: inherit;
