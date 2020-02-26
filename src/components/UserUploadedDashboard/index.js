@@ -23,7 +23,7 @@ class UserUploadedDashboard extends React.Component {
       <div className="App">
         <div className="App-content">
           <div className='App-header'>
-            <Tape text={'Uploaded moments'}/>
+            <Tape text={'User Moments'}/>
           </div>
           <div className='Moments-content'>
             <Moments />
@@ -136,14 +136,6 @@ class MomentsBase extends React.Component {
       <AuthUserContext.Consumer>
         {authUser => (
 	      <div className="container">
-
-          <div>
-            <form onSubmit={event => this.onCreateMoment(event, authUser)}>
-              <input type='file' ref={this.fileInput} multiple/>
-              <button type='submit'>Upload</button>
-            </form>
-          </div>
-          
           {loading && <div>Loading ...</div>}
 
           {labelCloud && (              
@@ -152,12 +144,19 @@ class MomentsBase extends React.Component {
 
           {moments != null ? (
             <div>
-              <p>Here are your uploaded moments!</p>
               <MomentList moments={this.state.moments} />
             </div>
           ) : (
             <div>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></div>
           )}
+
+          <div>
+            <p>Select some files below to upload...</p>
+            <form onSubmit={event => this.onCreateMoment(event, authUser)}>
+              <input type='file' ref={this.fileInput} multiple/>
+              <button type='submit'>Upload</button>
+            </form>
+          </div>
 
         </div>
         )}

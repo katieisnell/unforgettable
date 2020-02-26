@@ -22,7 +22,7 @@ class Dashboard extends React.Component {
       <div className="App">
         <div className="App-content">
           <div className='App-header'>
-            <Tape text={'Dashboard'}/>
+            <Tape text={'Instagram Media'}/>
           </div>
           <div className='Moments-content'>
             <Moments />
