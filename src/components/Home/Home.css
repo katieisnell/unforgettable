@@ -1,3 +1,6 @@
+h2 {
+  font-size: 24px;
+}
 .limit{
   max-width: 600px;
   word-wrap: break-word;

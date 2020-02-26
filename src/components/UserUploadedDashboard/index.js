@@ -180,7 +180,7 @@ const MomentItem = ({ moment }) => (
     <div className="moments-item-info">
       <ul>
         {moment.labels != null ? (
-          moment.labels[0].labelAnnotations.map((element) => <li key={element.mid} className="moments-item-captions">{element.description}</li>)
+          moment.labels[0].labelAnnotations.map((element) => <li key={element.description} className="moments-item-captions">{element.description}</li>)
         ) : (
           <li className="moments-item-captions">Labels loading...</li>
         )}
