@@ -12,7 +12,7 @@ class Landing extends React.Component {
           <a href='/'>
             <img src={logo} className="App-logo" alt="logo" />
           </a>
-          <p className='limit'>
+          <div className='limit'>
             <h2>Project title: “#unforgettable: What are the social factors associated with memorable photographs?”</h2>
               <p>
                 In this project I have explored the use of tags, and emotion-recognition to distinguish key memorable images from social media feeds. 
@@ -24,7 +24,7 @@ class Landing extends React.Component {
               <p>
                 Take some time to explore the application! Create an account, and then try to upload some of your memories. You might be surprised what is unforgettable for you <span role='img' aria-label='thinking'>🤔</span>...
               </p>
-           </p>
+           </div>
         </div>
       </div>
     );

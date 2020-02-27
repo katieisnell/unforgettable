@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { Button, Form, Grid, Header, Icon, Message, Modal, Segment } from 'semantic-ui-react'
 
 import '../App/App.css';
 
@@ -28,6 +29,7 @@ const INITIAL_STATE = {
   passwordTwo: '',
   isAdmin: false,
   error: null,
+  modalOpen: false
 };
 
 class SignUpFormBase extends Component {
@@ -74,6 +76,8 @@ class SignUpFormBase extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  handleClose = () => this.setState({ modalOpen: false, error: null })
+
   render() {
     const {
       username,
@@ -90,42 +94,75 @@ class SignUpFormBase extends Component {
       username === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Full Name"
-        />
-        <br/>
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <br/>
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <br/>
-        <input
-          name="passwordTwo"
-          value={passwordTwo}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <br/>
-        <button disabled={isInvalid} type="submit">Sign Up</button>
-        {error && <p>{error.message}</p>}
-      </form>
+      <>
+      <Grid textAlign='center' verticalAlign='middle'>
+        <Grid.Column style={{ minWidth: 290, maxWidth: 450 }}>
+          <Form size='huge' onSubmit={this.onSubmit}>
+            <Segment >
+              <Form.Input 
+                fluid icon='user' 
+                iconPosition='left' 
+                name="username"
+                value={username}
+                onChange={this.onChange}
+                type="text"
+                placeholder="Full name"
+              />
+              <Form.Input 
+                fluid icon='mail' 
+                iconPosition='left' 
+                name="email"
+                value={email}
+                onChange={this.onChange}
+                type="text"
+                placeholder="Email address"
+              />
+              <Form.Input 
+                fluid icon='lock' 
+                iconPosition='left' 
+                name="passwordOne"
+                value={passwordOne}
+                onChange={this.onChange}
+                type="password"
+                placeholder="Password"
+              />
+              <Form.Input
+                fluid
+                icon='lock'
+                iconPosition='left'
+                name="passwordTwo"
+                value={passwordTwo}
+                onChange={this.onChange}
+                type="password"
+                placeholder="Confirm password"
+              />
+              <Button disabled={isInvalid} type="submit" fluid size='large'>
+                  Sign up
+              </Button>
+            </Segment>
+          </Form>
+        </Grid.Column>
+      </Grid>
+      <Modal
+        centered={false}
+        open={error !== null}
+        onClose={this.handleClose}
+        size='small'
+        dimmer={'blurring'}
+      >
+        <Header icon='exclamation triangle' content='Error entering details' />
+          <Modal.Content>
+            <p>
+              {error && error.message}
+            </p>
+          </Modal.Content>
+          <Modal.Actions>
+          <Button color='green' onClick={this.handleClose} inverted>
+            <Icon name='checkmark' /> Got it!
+          </Button>
+        </Modal.Actions>
+      </Modal>
+      </>
     );
   }
 }
@@ -136,9 +173,9 @@ const SignUpForm = compose(
 ) (SignUpFormBase);
 
 const SignUpLink = () => (
-  <p>
-    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link> <span role="img" aria-label="content-face">😌</span>
-  </p>
+  <Message>
+    Don't have an account? <a href={ROUTES.SIGN_UP}>Sign Up</a> <span role="img" aria-label="content-face">😌</span>
+  </Message>
 );
 
 export default SignUpPage;

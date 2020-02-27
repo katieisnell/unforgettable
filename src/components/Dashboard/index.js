@@ -72,7 +72,7 @@ class MomentsBase extends React.Component {
           moments: momentList,
           loading: false 
         });
-      } else if (this.state.access_token) {
+      } else if (this.state.accessToken !== null && this.state.accessToken !== undefined) {
         fetch(`https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=${encodeURIComponent(this.state.accessToken)}`, {
           method: 'GET',
         })
@@ -93,6 +93,9 @@ class MomentsBase extends React.Component {
           });
           console.log('Data fetched from Instagram successfully');
           this.onCreateMoment(userId, json.data);
+        })
+        .catch(error => {
+          console.error(error)
         });
       } else {
         this.setState({ 

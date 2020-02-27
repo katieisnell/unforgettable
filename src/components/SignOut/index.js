@@ -1,11 +1,13 @@
 import React from 'react';
+import { Menu } from 'semantic-ui-react'
 
 import { withFirebase } from '../Firebase';
 
 const SignOutButton = ({ firebase }) => (
-  <button type="button" onClick={firebase.doSignOut}>
-    Sign Out
-  </button>
+  <Menu.Item
+    name='logout'
+    onClick={firebase.doSignOut}
+  />
 );
 
 export default withFirebase(SignOutButton);
