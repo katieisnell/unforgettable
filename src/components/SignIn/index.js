@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { Button, Form, Grid, Header, Icon, Modal, Segment } from 'semantic-ui-react'
 
 import '../App/App.css';
 
@@ -15,9 +16,8 @@ const SignInPage = () => (
     <div className="App-content">
       <div className='App-header'>
         <Tape text={'Sign In'}/>
-        <SignInForm />
-        <SignUpLink />
       </div>
+        <SignInForm />
     </div>
   </div>
 );
@@ -26,6 +26,7 @@ const INITIAL_STATE = {
   email: '',
   password: '',
   error: null,
+  modalOpen: false
 };
 
 class SignInFormBase extends Component {
@@ -52,36 +53,68 @@ class SignInFormBase extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  handleClose = () => this.setState({ modalOpen: false, error: null })
+
   render() {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <br/>
-        <input
-          name="password"
-          value={password}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <br/>
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
-        <br/>
-        <button>
-          <a href='http://127.0.0.1:8080/'>Login with Instagram</a>
-        </button>
-        {error && <p>{error.message}</p>}
-      </form>
+      <>
+      <Grid textAlign='center' verticalAlign='middle'>
+        <Grid.Column style={{ maxWidth: 450 }}>
+          <Form size='huge' onSubmit={this.onSubmit}>
+            <Segment >
+              <Form.Input 
+                fluid icon='mail' 
+                iconPosition='left' 
+                name="email"
+                value={email}
+                onChange={this.onChange}
+                type="text"
+                placeholder='Email address' 
+              />
+              <Form.Input
+                fluid
+                icon='lock'
+                iconPosition='left'
+                placeholder='Password'
+                type='password'
+                name="password"
+                value={password}
+                onChange={this.onChange}
+              />
+              <Button disabled={isInvalid} type="submit" fluid size='large'>
+                  Login
+              </Button>
+              <div>OR</div>
+              <Button fluid size='large'>
+                <a href='http://iam-research.manchester.ac.uk/instagram/'>Login with Instagram</a>
+              </Button>
+            </Segment>
+          </Form>
+          <SignUpLink />
+        </Grid.Column>
+      </Grid>
+      <Modal
+        centered={false}
+        open={error !== null}
+        onClose={this.handleClose}
+        size='small'
+        dimmer={'blurring'}
+      >
+        <Header icon='exclamation triangle' content='Error entering details' />
+          <Modal.Content>
+            <p>
+              {error && error.message}
+            </p>
+          </Modal.Content>
+          <Modal.Actions>
+          <Button color='green' onClick={this.handleClose} inverted>
+            <Icon name='checkmark' /> Got it!
+          </Button>
+        </Modal.Actions>
+      </Modal>
+      </>
     );
   }
 }
