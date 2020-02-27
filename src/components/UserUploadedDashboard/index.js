@@ -3,8 +3,8 @@ import React from 'react';
 import '../App/App.css';
 import './UserUploadedDashboard.css';
 
-import Tape from '../Tape';
 import LabelCloud from '../LabelCloud';
+import Tape from '../Tape';
 
 import { 
   withFirebase 
@@ -41,7 +41,8 @@ class MomentsBase extends React.Component {
       currentUser: 'Unknown user',
       loading: false,
       moments: null,
-      labelCloud: null
+      labelCloud: null,
+      showPopup: false
     };
     this.fileInput = React.createRef();
     this.onCreateMoment = this.onCreateMoment.bind(this);
