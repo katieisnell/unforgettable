@@ -81,6 +81,11 @@ class Firebase {
 
   userUploadedMoments = () => this.db.ref('userUploadedMoments');
 
+  // Labels API
+  label = uid => this.db.ref(`labels/${uid}`);
+
+  labels = () => this.db.ref('labels');
+
   storageRef = () => this.storage().ref();
 
 }

@@ -80,7 +80,7 @@ class MomentsBase extends React.Component {
       if (labelCloud) {
         let data = [];
         Object.values(labelCloud['_data']).forEach(label => {
-          data.push({ value: label[0], count: label[1]})
+          data.push({ text: label[0], value: label[1]})
         })
 
         this.setState({
