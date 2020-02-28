@@ -108,20 +108,22 @@ class LabelCloudBase extends Component {
         >
           <Modal.Header><h2>Details about the tag '{labelValue}'</h2></Modal.Header>
             <Modal.Content>
+              {labelCount && (
               <p>
-                <b>Number of occurrences in your moments</b> {labelCount}
+                <b>Number of occurrences in your moments</b> {labelCount.toLocaleString(navigator.language, { minimumFractionDigits: 0 })}
               </p>
+              )}
               {labelSearchResults && (
                 <>
                   <p>
-                    <b>Number of search results for the tag</b> {labelSearchResults.search_information.total_results}
+                    <b>Number of search results for the tag</b> {labelSearchResults.search_information.total_results.toLocaleString(navigator.language, { minimumFractionDigits: 0 })}
                   </p>
                   <p>
                     <b>Related searches on the web:</b>
                   </p>
                   <ul>
-                    {labelSearchResults.related_searches.map((searchTerm) => 
-                      <li key={searchTerm.query}><a href={searchTerm.link} rel='noopener noreferrer' target='_blank'>{searchTerm.query}</a></li>)}
+                    {labelSearchResults.related_searches.map((searchTerm, index) => 
+                      <li key={index}><a href={searchTerm.link} rel='noopener noreferrer' target='_blank'>{searchTerm.query}</a></li>)}
                   </ul>
                   {labelSearchResults.knowledge_graph && labelSearchResults.knowledge_graph.images && (
                     <>
@@ -129,8 +131,8 @@ class LabelCloudBase extends Component {
                       <b>Related images on the web:</b>
                     </p>
                     <Image.Group size='small'>
-                      {labelSearchResults.knowledge_graph.images.map((image) => 
-                        <Image rounded key={image} src={image}/>
+                      {labelSearchResults.knowledge_graph.images.map((image, index) => 
+                        <Image rounded key={index} src={image}/>
                       )}
                     </Image.Group>
                     </>
@@ -141,8 +143,8 @@ class LabelCloudBase extends Component {
                       <b>Related stories on the web:</b>
                     </p>
                     <ul>
-                      {labelSearchResults.top_stories.map((story) => 
-                        <li key={story.link}><a key={story.link} href={story.link} rel='noopener noreferrer' target='_blank'>{story.title}</a> (Source: {story.source})</li>
+                      {labelSearchResults.top_stories.map((story, index) => 
+                        <li key={index}><a href={story.link} rel='noopener noreferrer' target='_blank'>{story.title}</a> (source: {story.source})</li>
                       )}
                     </ul>
                     </>
@@ -167,7 +169,7 @@ const labelCloudOptions = {
   fontSizes: [10, 36],
   rotations: 1,
   rotationAngles: [0, 90],
-  transitionDuration: 2000
+  transitionDuration: 1000
 };
 
 const LabelCloud = withFirebase(LabelCloudBase);
