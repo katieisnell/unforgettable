@@ -158,7 +158,7 @@ class MomentsBase extends React.Component {
 
           <div className='file-upload'>
             <Form onSubmit={event => this.onCreateMoment(event, authUser)} size='huge'>
-              <label>Select some photos below to upload...</label>
+              <p>Select some photos below to upload...</p>
               <Form.Group widths='equal'>
                 <input type='file' ref={this.fileInput} multiple />
                 <Button

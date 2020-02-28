@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
 import { compose } from 'recompose';
+import { Dimmer, Loader } from 'semantic-ui-react'
 
 import '../App/App.css';
 
@@ -19,14 +20,14 @@ const AdminPage = () => (
         <div className="App-content">
           <div className='App-header'>  
             <Tape text={'Admin area'}/>
-            <p>
-              The Admin area is accessible by every signed in admin user.
-            </p>
-            <Switch>
-              <Route exact path={ROUTES.ADMIN_DETAILS} component={UserItem} />
-              <Route exact path={ROUTES.ADMIN} component={UserList} />
-            </Switch>
           </div>
+          <p>
+            The Admin area is accessible by every signed in admin user.
+          </p>
+          <Switch>
+            <Route exact path={ROUTES.ADMIN_DETAILS} component={UserItem} />
+            <Route exact path={ROUTES.ADMIN} component={UserList} />
+          </Switch>
         </div>
       </div>
     )}
@@ -77,7 +78,11 @@ class UserListBase extends Component {
 
     return (
       <div>
-        {loading && <div>Loading ...</div>}
+        {loading && (
+          <Dimmer active>
+            <Loader size='huge'>Loading</Loader>
+          </Dimmer>
+        )}
         {users && users.length && 
           users.map(user => (
             <div key={user.uid}>
