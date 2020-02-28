@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Dimmer, Form, Loader } from 'semantic-ui-react'
 
 import '../App/App.css';
 import './UserUploadedDashboard.css';
@@ -137,7 +138,11 @@ class MomentsBase extends React.Component {
       <AuthUserContext.Consumer>
         {authUser => (
 	      <div className="container">
-          {loading && <p>Loading ...</p>}
+          {loading && (
+            <Dimmer active>
+              <Loader size='huge'>Loading</Loader>
+            </Dimmer>
+          )}
 
           {labelCloud && (              
             <LabelCloud data={labelCloud}/>
@@ -152,11 +157,18 @@ class MomentsBase extends React.Component {
           )}
 
           <div className='file-upload'>
-            <p>Select some files below to upload...</p>
-            <form onSubmit={event => this.onCreateMoment(event, authUser)}>
-              <input type='file' ref={this.fileInput} multiple/>
-              <button type='submit'>Upload</button>
-            </form>
+            <Form onSubmit={event => this.onCreateMoment(event, authUser)} size='huge'>
+              <label>Select some photos below to upload...</label>
+              <Form.Group widths='equal'>
+                <input type='file' ref={this.fileInput} multiple />
+                <Button
+                  content='Upload'
+                  labelPosition='left'
+                  icon='upload'
+                  type='submit'
+                />   
+              </Form.Group>
+            </Form>
           </div>
 
         </div>
@@ -178,12 +190,16 @@ const MomentItem = ({ moment }) => (
   <div className="moments-item" tabIndex="0">
     <img src={moment.media_url} alt={moment.uid} className="moments-image"/>
 
+    {moment.labels == null && (
+      <Dimmer active size='massive'>
+        <Loader>Labels loading</Loader>
+      </Dimmer>
+    )}
+
     <div className="moments-item-info">
       <ul>
-        {moment.labels != null ? (
+        {moment.labels != null && (
           moment.labels[0].labelAnnotations.map((element) => <li key={element.description} className="moments-item-captions">{element.description}</li>)
-        ) : (
-          <li className="moments-item-captions">Labels loading...</li>
         )}
         {moment.faces && (
           moment.faces.faceAnnotations.map((element) => 

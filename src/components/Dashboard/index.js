@@ -1,4 +1,5 @@
 import React from 'react';
+import { Dimmer, Loader } from 'semantic-ui-react'
 
 import '../App/App.css';
 import './Dashboard.css';
@@ -137,7 +138,11 @@ class MomentsBase extends React.Component {
       <AuthUserContext.Consumer>
         {authUser => (
 	      <div className="container">     
-          {loading && <p>Loading ...</p>}
+          {loading && (
+            <Dimmer active>
+              <Loader size='huge'>Loading</Loader>
+            </Dimmer>
+          )}
 
           {moments != null ? (
             <div>
