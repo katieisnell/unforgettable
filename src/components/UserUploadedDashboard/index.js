@@ -93,7 +93,6 @@ class ImagesBase extends React.Component {
     });
 
     this.props.firebase.mostPostedLabelsImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
-      console.log(this.state.momentList);
       const imageObject = snapshot.val();
 
       if (imageObject) {
