@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dimmer, Form, Label, Loader } from 'semantic-ui-react'
+import { Button, Dimmer, Dropdown, Form, Label, Loader } from 'semantic-ui-react'
 
 import '../App/App.css';
 import './UserUploadedDashboard.css';
@@ -16,7 +16,8 @@ import {
   withAuthorisation 
 } from '../Session';
 
-const USER_UPLOADED = 'USER_UPLOADED'
+import * as MOMENTS from '../../constants/moments';
+const USER_UPLOADED = 'USER_UPLOADED';
 
 class UserUploadedDashboard extends React.Component {
   render() {
@@ -24,7 +25,7 @@ class UserUploadedDashboard extends React.Component {
       <div className='App'>
         <div className='App-content'>
           <div className='App-header'>
-            <Tape text={'User images'}/>
+            <Tape text={'User Moments'}/>
           </div>
           <div className='Moments-content'>
             <Images />
@@ -40,8 +41,10 @@ class ImagesBase extends React.Component {
     super(props);
     this.state = {
       currentUser: 'Unknown user',
+      currentMoment: MOMENTS.ALL_IMAGES,
       loading: false,
       images: null,
+      mostPostedLabelsImages: null,
       labelCloud: null,
       showPopup: false
     };
@@ -88,10 +91,31 @@ class ImagesBase extends React.Component {
         });
       }
     });
+
+    this.props.firebase.mostPostedLabelsImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
+      console.log(this.state.momentList);
+      const imageObject = snapshot.val();
+
+      if (imageObject) {
+        // Convert images list from snapshot
+        const imageList = Object.keys(imageObject).map(key => ({
+          ...imageObject[key],
+          uid: key
+        }));
+
+        this.setState({ 
+          mostPostedLabelsImages: imageList
+        });
+      }
+      this.setState({ 
+        loading: false 
+      });
+    });
   }
 
   componentWillUnmount() {
     this.props.firebase.userUploadedImages().off();
+    this.props.firebase.mostPostedLabelsImages().off();
     this.props.firebase.users().off();
   }
 
@@ -132,7 +156,13 @@ class ImagesBase extends React.Component {
   }
 
   render() {
-    const { images, loading, labelCloud } = this.state;
+    const { 
+      currentMoment,
+      images,
+      labelCloud,
+      loading,
+      mostPostedLabelsImages
+    } = this.state;
     
     return (
       <AuthUserContext.Consumer>
@@ -148,19 +178,59 @@ class ImagesBase extends React.Component {
             <LabelCloud data={labelCloud}/>
           )}
 
-          {images != null ? (
+          <Dropdown
+              text='Filter Tags'
+              floating
+              labeled
+              button
+              icon='filter'
+              className='icon'
+            >
+              <Dropdown.Menu>
+                <Dropdown.Header icon='tags' content='Filter by tag' />
+                <Dropdown.Divider />
+                {images && (
+                  <Dropdown.Item 
+                    description={images.length}
+                    text='All images'
+                    value={MOMENTS.ALL_IMAGES}
+                    onClick={(event, data) => this.setState({ currentMoment: data.value })}
+                  />
+                )}
+                {mostPostedLabelsImages && (
+                  <Dropdown.Item 
+                    description={mostPostedLabelsImages.length}
+                    text='Most posted label'
+                    value={MOMENTS.MOST_POSTED_LABELS_IMAGES}
+                    onClick={(event, data) => this.setState({ currentMoment: data.value })}
+                  />
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+
+          {currentMoment === MOMENTS.ALL_IMAGES && (
+            images != null ? (
             <div>
-              <ImageList images={this.state.images} />
+              <ImageList images={images} />
             </div>
           ) : (
             <p>You have no images <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
-          )}
+          ))}
+
+          {currentMoment === MOMENTS.MOST_POSTED_LABELS_IMAGES && (
+            mostPostedLabelsImages != null ? (
+            <div>
+              <ImageList images={mostPostedLabelsImages} />
+            </div>
+          ) : (
+            <p>You have no moments for 'most posted labels images' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+          ))}
 
           <div className='file-upload'>
             <Form onSubmit={event => this.uploadImages(event, authUser)} size='huge'>
               <p>Select some photos below to upload...</p>
               <Form.Group widths='equal'>
-                <input type='file' ref={this.fileInput} multiple />
+                <input type='file' ref={this.fileInput} accept='image/*' multiple />
                 <Button
                   content='Upload'
                   labelPosition='left'
