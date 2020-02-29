@@ -108,6 +108,7 @@ class MomentsBase extends React.Component {
 
   componentWillUnmount() {
     this.props.firebase.instaUploadedImages().off();
+    this.props.firebase.users().off();
   }
 
   onCreateMoment = (userId, instaMedia) => {
