@@ -12,8 +12,8 @@ import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
 
 const SignUpPage = () => (
-  <div className="App">
-    <div className="App-content">
+  <div className='App'>
+    <div className='App-content'>
       <div className='App-header'>
         <Tape text={'Sign Up'}/>
         <SignUpForm />
@@ -102,41 +102,41 @@ class SignUpFormBase extends Component {
               <Form.Input 
                 fluid icon='user' 
                 iconPosition='left' 
-                name="username"
+                name='username'
                 value={username}
                 onChange={this.onChange}
-                type="text"
-                placeholder="Full name"
+                type='text'
+                placeholder='Full name'
               />
               <Form.Input 
                 fluid icon='mail' 
                 iconPosition='left' 
-                name="email"
+                name='email'
                 value={email}
                 onChange={this.onChange}
-                type="text"
-                placeholder="Email address"
+                type='text'
+                placeholder='Email address'
               />
               <Form.Input 
                 fluid icon='lock' 
                 iconPosition='left' 
-                name="passwordOne"
+                name='passwordOne'
                 value={passwordOne}
                 onChange={this.onChange}
-                type="password"
-                placeholder="Password"
+                type='password'
+                placeholder='Password'
               />
               <Form.Input
                 fluid
                 icon='lock'
                 iconPosition='left'
-                name="passwordTwo"
+                name='passwordTwo'
                 value={passwordTwo}
                 onChange={this.onChange}
-                type="password"
-                placeholder="Confirm password"
+                type='password'
+                placeholder='Confirm password'
               />
-              <Button disabled={isInvalid} type="submit" fluid size='large'>
+              <Button disabled={isInvalid} type='submit' fluid size='large'>
                   Sign up
               </Button>
             </Segment>
@@ -174,7 +174,7 @@ const SignUpForm = compose(
 
 const SignUpLink = () => (
   <Message>
-    Don't have an account? <a href={ROUTES.SIGN_UP}>Sign Up</a> <span role="img" aria-label="content-face">😌</span>
+    Don't have an account? <a href={ROUTES.SIGN_UP}>Sign Up</a> <span role='img' aria-label='content-face'>😌</span>
   </Message>
 );
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dimmer, Form, Loader } from 'semantic-ui-react'
+import { Button, Dimmer, Form, Label, Loader } from 'semantic-ui-react'
 
 import '../App/App.css';
 import './UserUploadedDashboard.css';
@@ -21,13 +21,13 @@ const USER_UPLOADED = 'USER_UPLOADED'
 class UserUploadedDashboard extends React.Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-content">
+      <div className='App'>
+        <div className='App-content'>
           <div className='App-header'>
-            <Tape text={'User Moments'}/>
+            <Tape text={'User images'}/>
           </div>
           <div className='Moments-content'>
-            <Moments />
+            <Images />
           </div>
         </div>
       </div>
@@ -35,18 +35,18 @@ class UserUploadedDashboard extends React.Component {
   }
 }
 
-class MomentsBase extends React.Component {
+class ImagesBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentUser: 'Unknown user',
       loading: false,
-      moments: null,
+      images: null,
       labelCloud: null,
       showPopup: false
     };
     this.fileInput = React.createRef();
-    this.onCreateMoment = this.onCreateMoment.bind(this);
+    this.uploadImages = this.uploadImages.bind(this);
   }
 
   componentDidMount() {
@@ -55,18 +55,18 @@ class MomentsBase extends React.Component {
     var userId = this.props.firebase.auth.currentUser.uid;
     this.setState({ currentUser: userId });
 
-    this.props.firebase.userUploadedMoments().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
-      const momentObject = snapshot.val();
+    this.props.firebase.userUploadedImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
+      const imageObject = snapshot.val();
 
-      if (momentObject) {
-        // Convert moments list from snapshot
-        const momentList = Object.keys(momentObject).map(key => ({
-          ...momentObject[key],
+      if (imageObject) {
+        // Convert images list from snapshot
+        const imageList = Object.keys(imageObject).map(key => ({
+          ...imageObject[key],
           uid: key
         }));
 
         this.setState({ 
-          moments: momentList
+          images: imageList
         });
       }
       this.setState({ 
@@ -91,16 +91,16 @@ class MomentsBase extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.firebase.userUploadedMoments().off();
+    this.props.firebase.userUploadedImages().off();
     this.props.firebase.users().off();
   }
 
-  onCreateMoment = (event, authUser) => {
+  uploadImages = (event, authUser) => {
     event.preventDefault();
 
     // Create a storage reference from our storage service
     const storageRef = this.props.firebase.storage.ref();
-    const momentsRef = this.props.firebase.userUploadedMoments();
+    const imagesRef = this.props.firebase.userUploadedImages();
 
     const noOfFiles = this.fileInput.current.files.length;
     
@@ -114,13 +114,13 @@ class MomentsBase extends React.Component {
       const currentTime = (new Date()).getTime();
 
       storageRef
-          .child(`userUploadedMoments/${authUser.uid}/${file.name}`)
+          .child(`userUploadedImages/${authUser.uid}/${file.name}`)
           .put(file, metadata).then((snapshot) => {   
             snapshot.ref.getDownloadURL().then(function(downloadURL) {
               // console.log('Download url', downloadURL)
 
               // Connects images to user in database
-              momentsRef.push({
+              imagesRef.push({
                 media_url: downloadURL,
                 timestamp: currentTime,
                 user_id: authUser.uid,
@@ -132,12 +132,12 @@ class MomentsBase extends React.Component {
   }
 
   render() {
-    const { moments, loading, labelCloud } = this.state;
+    const { images, loading, labelCloud } = this.state;
     
     return (
       <AuthUserContext.Consumer>
         {authUser => (
-	      <div className="container">
+	      <div className='container'>
           {loading && (
             <Dimmer active>
               <Loader size='huge'>Loading</Loader>
@@ -148,16 +148,16 @@ class MomentsBase extends React.Component {
             <LabelCloud data={labelCloud}/>
           )}
 
-          {moments != null ? (
+          {images != null ? (
             <div>
-              <MomentList moments={this.state.moments} />
+              <ImageList images={this.state.images} />
             </div>
           ) : (
-            <p>You have no moments <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+            <p>You have no images <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           )}
 
           <div className='file-upload'>
-            <Form onSubmit={event => this.onCreateMoment(event, authUser)} size='huge'>
+            <Form onSubmit={event => this.uploadImages(event, authUser)} size='huge'>
               <p>Select some photos below to upload...</p>
               <Form.Group widths='equal'>
                 <input type='file' ref={this.fileInput} multiple />
@@ -178,40 +178,62 @@ class MomentsBase extends React.Component {
   }
 }
 
-const MomentList = ({ moments }) => (
-  <div className="moments">
-  {moments.map(moment => (
-      <MomentItem key={moment.uid} moment={moment} />
+const ImageList = ({ images }) => (
+  <div className='moments'>
+  {images.map(image => (
+      <ImageItem key={image.uid} image={image} />
     ))}
   </div>
 );
 
-const MomentItem = ({ moment }) => (
-  <div className="moments-item" tabIndex="0">
-    <img src={moment.media_url} alt={moment.uid} className="moments-image"/>
+const ImageItem = ({ image }) => (
+  <div className='moments-item' tabIndex='0'>
+    <img src={image.media_url} alt={image.uid} className='moments-image'/>
 
-    {moment.labels == null && (
+    {image.labels == null && (
       <Dimmer active size='massive'>
         <Loader>Labels loading</Loader>
       </Dimmer>
     )}
 
-    <div className="moments-item-info">
-      <ul>
-        {moment.labels != null && (
-          moment.labels[0].labelAnnotations.map((element) => <li key={element.description} className="moments-item-captions">{element.description}</li>)
+    <div className='moments-item-info'>
+      <div>
+        <Label.Group tag size='large'>
+          {image.labels != null && (
+            image.labels[0].labelAnnotations.map((element, index) => 
+            <Label key={index}>{element.description}</Label>)
+          )}
+        </Label.Group>
+
+        {image.faces && (
+          <Label.Group size='large'>
+            {image.faces.faceAnnotations.map((element, index) => 
+            <Label key={index}>
+              {(element.joyLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+                <span role='img' aria-label='joy'>😄</span>
+              )}
+              {(element.surpriseLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+                <span role='img' aria-label='surprise'>😲</span>
+              )}
+              {(element.sorrowLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+                <span role='img' aria-label='sorrow'>😢</span>
+              )}
+              {(element.angerLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+                <span role='img' aria-label='anger'>😠</span>
+              )}
+            </Label>)}
+          </Label.Group>
         )}
-        {moment.faces && (
-          moment.faces.faceAnnotations.map((element) => 
-          <li key={element} className="moments-item-captions"><span role='img' aria-label='joy'>😄</span> ({element.joyLikelihood}) <span role='img' aria-label='anger'>😠</span> ({element.angerLikelihood}) <span role='img' aria-label='sorrow'>😢</span> ({element.sorrowLikelihood}) <span role='img' aria-label='surprise'>😲</span> ({element.surpriseLikelihood})</li>)
-        )}
-        <li className="moments-item-timestamps">Uploaded on {new Date(moment.timestamp).toLocaleDateString()}</li>
-      </ul>
+        
+        <Label.Group size='large'>
+          <Label>Uploaded on {new Date(image.timestamp).toLocaleDateString()}</Label>
+        </Label.Group>
+      </div>
     </div>
   </div>
 );
 
-const Moments = withFirebase(MomentsBase);
+const Images = withFirebase(ImagesBase);
 
 const condition = authUser => !!authUser;
 

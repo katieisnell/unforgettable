@@ -16,8 +16,8 @@ import * as ROLES from '../../constants/roles';
 const AdminPage = () => (
   <AuthUserContext.Consumer>
     {authUser => (
-      <div className="App">
-        <div className="App-content">
+      <div className='App'>
+        <div className='App-content'>
           <div className='App-header'>  
             <Tape text={'Admin area'}/>
           </div>

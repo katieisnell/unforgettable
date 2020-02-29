@@ -72,14 +72,14 @@ class Firebase {
   users = () => this.db.ref('users');
 
   // Moments API
-  moment = uid => this.db.ref(`moments/${uid}`);
+  instaUploadedImage = uid => this.db.ref(`instaUploadedImages/${uid}`);
 
-  moments = () => this.db.ref('moments');
+  instaUploadedImages = () => this.db.ref('instaUploadedImages');
 
   // User uploaded moments API
-  userUploadedMoment = uid => this.db.ref(`userUploadedMoments/${uid}`);
+  userUploadedImage = uid => this.db.ref(`userUploadedImages/${uid}`);
 
-  userUploadedMoments = () => this.db.ref('userUploadedMoments');
+  userUploadedImages = () => this.db.ref('userUploadedImages');
 
   // Labels API
   label = uid => this.db.ref(`labels/${uid}`);

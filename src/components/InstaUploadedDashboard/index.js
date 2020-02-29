@@ -2,7 +2,7 @@ import React from 'react';
 import { Dimmer, Loader } from 'semantic-ui-react'
 
 import '../App/App.css';
-import './Dashboard.css';
+import './InstaUploadedDashboard.css';
 
 import Tape from '../Tape';
 
@@ -17,11 +17,11 @@ import {
 
 const INSTA_UPLOADED = 'INSTA_UPLOADED';
 
-class Dashboard extends React.Component {
+class InstaUploadedDashboard extends React.Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-content">
+      <div className='App'>
+        <div className='App-content'>
           <div className='App-header'>
             <Tape text={'Instagram Media'}/>
           </div>
@@ -59,7 +59,7 @@ class MomentsBase extends React.Component {
       });
     });
 
-    this.props.firebase.moments().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
+    this.props.firebase.instaUploadedImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
       const momentObject = snapshot.val();
 
       if (momentObject) {
@@ -107,12 +107,12 @@ class MomentsBase extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.firebase.moments().off();
+    this.props.firebase.instaUploadedImages().off();
   }
 
   onCreateMoment = (userId, instaMedia) => {
     // Create a storage reference from our storage service
-    const momentsRef = this.props.firebase.moments();
+    const momentsRef = this.props.firebase.instaUploadedImages();
 
     for (var i = 0; i < instaMedia.length; i++) {
       const file = instaMedia[i];
@@ -137,7 +137,7 @@ class MomentsBase extends React.Component {
     return (
       <AuthUserContext.Consumer>
         {authUser => (
-	      <div className="container">     
+	      <div className='container'>     
           {loading && (
             <Dimmer active>
               <Loader size='huge'>Loading</Loader>
@@ -161,7 +161,7 @@ class MomentsBase extends React.Component {
 }
 
 const MomentList = ({ moments }) => (
-  <div className="moments">
+  <div className='moments'>
   {moments.map(moment => (
       <MomentItem key={moment.media_id} moment={moment} />
     ))}
@@ -169,13 +169,13 @@ const MomentList = ({ moments }) => (
 );
 
 const MomentItem = ({ moment }) => (
-  <div className="moments-item" tabIndex="0">
-    <img src={moment.media_url} alt={moment.id} className="moments-image"/>
+  <div className='moments-item' tabIndex='0'>
+    <img src={moment.media_url} alt={moment.id} className='moments-image'/>
 
-    <div className="moments-item-info">
+    <div className='moments-item-info'>
       <ul>
-        <li className="moments-item-captions">{moment.caption}</li>
-        <li className="moments-item-timestamps">Uploaded on {new Date(moment.timestamp).toLocaleDateString()}</li>
+        <li className='moments-item-captions'>{moment.caption}</li>
+        <li className='moments-item-timestamps'>Uploaded on {new Date(moment.timestamp).toLocaleDateString()}</li>
       </ul>
     </div>
   </div>
@@ -185,4 +185,4 @@ const Moments = withFirebase(MomentsBase);
 
 const condition = authUser => !!authUser;
 
-export default withAuthorisation(condition)(Dashboard);
+export default withAuthorisation(condition)(InstaUploadedDashboard);
