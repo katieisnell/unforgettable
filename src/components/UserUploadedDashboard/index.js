@@ -45,6 +45,7 @@ class ImagesBase extends React.Component {
       loading: false,
       images: null,
       mostPostedLabelsImages: null,
+      multipleTaggedPeopleImages: null,
       labelCloud: null,
       showPopup: false
     };
@@ -110,11 +111,31 @@ class ImagesBase extends React.Component {
         loading: false 
       });
     });
+
+    this.props.firebase.multipleTaggedPeopleImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
+      const imageObject = snapshot.val();
+
+      if (imageObject) {
+        // Convert images list from snapshot
+        const imageList = Object.keys(imageObject).map(key => ({
+          ...imageObject[key],
+          uid: key
+        }));
+
+        this.setState({ 
+          multipleTaggedPeopleImages: imageList
+        });
+      }
+      this.setState({ 
+        loading: false 
+      });
+    });
   }
 
   componentWillUnmount() {
     this.props.firebase.userUploadedImages().off();
     this.props.firebase.mostPostedLabelsImages().off();
+    this.props.firebase.multipleTaggedPeopleImages().off();
     this.props.firebase.users().off();
   }
 
@@ -160,7 +181,8 @@ class ImagesBase extends React.Component {
       images,
       labelCloud,
       loading,
-      mostPostedLabelsImages
+      mostPostedLabelsImages,
+      multipleTaggedPeopleImages
     } = this.state;
     
     return (
@@ -177,13 +199,17 @@ class ImagesBase extends React.Component {
             <LabelCloud data={labelCloud}/>
           )}
 
-          <Dropdown
-              text='Filter Tags'
+          {images &&
+          <div className='moments'>
+            <div className='moments-item' tabIndex='0'>
+              <Dropdown
+              text='Filter moments'
               floating
               labeled
               button
               icon='filter'
               className='icon'
+              fluid
             >
               <Dropdown.Menu>
                 <Dropdown.Header icon='tags' content='Filter by tag' />
@@ -199,13 +225,24 @@ class ImagesBase extends React.Component {
                 {mostPostedLabelsImages && (
                   <Dropdown.Item 
                     description={mostPostedLabelsImages.length}
-                    text='Most posted label'
+                    text='Most posted tag'
                     value={MOMENTS.MOST_POSTED_LABELS_IMAGES}
+                    onClick={(event, data) => this.setState({ currentMoment: data.value })}
+                  />
+                )}
+                {multipleTaggedPeopleImages && (
+                  <Dropdown.Item 
+                    description={multipleTaggedPeopleImages.length}
+                    text='Multiple tagged people'
+                    value={MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
                   />
                 )}
               </Dropdown.Menu>
             </Dropdown>
+            </div>
+          </div>
+          }
 
           {currentMoment === MOMENTS.ALL_IMAGES && (
             images != null ? (
@@ -222,7 +259,16 @@ class ImagesBase extends React.Component {
               <ImageList images={mostPostedLabelsImages} />
             </div>
           ) : (
-            <p>You have no moments for 'most posted labels images' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+            <p>You have no moments for 'most posted tags' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+          ))}
+
+          {currentMoment === MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES && (
+            multipleTaggedPeopleImages != null ? (
+            <div>
+              <ImageList images={multipleTaggedPeopleImages} />
+            </div>
+          ) : (
+            <p>You have no moments for 'multiple tagged people' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           ))}
 
           <div className='file-upload'>
@@ -269,14 +315,14 @@ const ImageItem = ({ image }) => (
       <div>
         <Label.Group tag size='large'>
           {image.labels != null && (
-            image.labels[0].labelAnnotations.map((element, index) => 
+            image.labels.map((element, index) => 
             <Label key={index}>{element.description}</Label>)
           )}
         </Label.Group>
 
         {image.faces && (
           <Label.Group size='large'>
-            {image.faces.faceAnnotations.map((element, index) => 
+            {image.faces.map((element, index) => 
             <Label key={index}>
               {(element.joyLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
                 <span role='img' aria-label='joy'>😄</span>
