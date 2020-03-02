@@ -334,6 +334,12 @@ const ImageItem = ({ image }) => (
               {(element.angerLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
                 <span role='img' aria-label='anger'>😠</span>
               )}
+              {(element.joyLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
+               (element.surpriseLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
+               (element.sorrowLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
+               (element.angerLikelihood !== ('VERY_LIKELY' || 'LIKELY')) && (
+                <span role='img' aria-label='blank'>😶</span>
+              )}
             </Label>)}
           </Label.Group>
         )}
