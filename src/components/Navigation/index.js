@@ -19,7 +19,7 @@ class Navigation extends Component {
     const { activeItem } = this.state
 
     return (
-      <div className="Navigation">
+      <div className='Navigation'>
         <AuthUserContext.Consumer>
           {authUser =>
             <Menu secondary size='huge'>
@@ -43,7 +43,7 @@ class Navigation extends Component {
                 name='instagramMedia'
                 active={activeItem === 'instagramMedia'}
                 as={Link}
-                to={ROUTES.DASHBOARD}
+                to={ROUTES.INSTA_UPLOADED_DASHBOARD}
                 onClick={this.handleItemClick}
               />
               <Menu.Item
@@ -69,8 +69,8 @@ class Navigation extends Component {
                   <SignOutButton />
                 ) : (
                   <Menu.Item
-                    name='login'
-                    active={activeItem === 'login'}
+                    name='signIn'
+                    active={activeItem === 'signIn'}
                     as={Link}
                     to={ROUTES.SIGN_IN}
                     onClick={this.handleItemClick}

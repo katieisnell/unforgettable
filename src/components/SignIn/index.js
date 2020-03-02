@@ -12,8 +12,8 @@ import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
-  <div className="App">
-    <div className="App-content">
+  <div className='App'>
+    <div className='App-content'>
       <div className='App-header'>
         <Tape text={'Sign In'}/>
       </div>
@@ -67,10 +67,10 @@ class SignInFormBase extends Component {
               <Form.Input 
                 fluid icon='mail' 
                 iconPosition='left' 
-                name="email"
+                name='email'
                 value={email}
                 onChange={this.onChange}
-                type="text"
+                type='text'
                 placeholder='Email address' 
               />
               <Form.Input
@@ -79,16 +79,16 @@ class SignInFormBase extends Component {
                 iconPosition='left'
                 placeholder='Password'
                 type='password'
-                name="password"
+                name='password'
                 value={password}
                 onChange={this.onChange}
               />
-              <Button disabled={isInvalid} type="submit" fluid size='large'>
-                  Login
+              <Button disabled={isInvalid} type='submit' fluid size='large'>
+                  Sign In
               </Button>
               <div>OR</div>
               <Button fluid size='large'>
-                <a href='http://iam-research.manchester.ac.uk/instagram/'>Login with Instagram</a>
+                <a href='http://iam-research.manchester.ac.uk/instagram/'>Sign In with Instagram</a>
               </Button>
             </Segment>
           </Form>
