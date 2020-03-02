@@ -68,18 +68,27 @@ class Firebase {
 
   // User API
   user = uid => this.db.ref(`users/${uid}`);
-  
   users = () => this.db.ref('users');
+
+  // Insta uploaded images API
+  instaUploadedImage = uid => this.db.ref(`instaUploadedImages/${uid}`);
+  instaUploadedImages = () => this.db.ref('instaUploadedImages');
+
+  // User uploaded images API
+  userUploadedImage = uid => this.db.ref(`userUploadedImages/${uid}`);
+  userUploadedImages = () => this.db.ref('userUploadedImages');
+
+  // Labels API
+  label = uid => this.db.ref(`labels/${uid}`);
+  labels = () => this.db.ref('labels');
 
   // Moments API
   moment = uid => this.db.ref(`moments/${uid}`);
-
   moments = () => this.db.ref('moments');
-
-  // User uploaded moments API
-  userUploadedMoment = uid => this.db.ref(`userUploadedMoments/${uid}`);
-
-  userUploadedMoments = () => this.db.ref('userUploadedMoments');
+  mostPostedLabelsImage = uid => this.db.ref(`moments/most_posted_labels_images/${uid}`);
+  mostPostedLabelsImages = () => this.db.ref('moments/most_posted_labels_images');
+  multipleTaggedPeopleImage = uid => this.db.ref(`moments/multiple_tagged_people_images/${uid}`);
+  multipleTaggedPeopleImages = () => this.db.ref('moments/multiple_tagged_people_images');
 
   storageRef = () => this.storage().ref();
 

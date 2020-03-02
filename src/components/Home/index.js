@@ -7,10 +7,10 @@ import logo from '../../assets/logo.png'
 class Landing extends React.Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-content">
+      <div className='App'>
+        <div className='App-content'>
           <a href='/'>
-            <img src={logo} className="App-logo" alt="logo" />
+            <img src={logo} className='App-logo' alt='logo' />
           </a>
           <div className='limit'>
             <h2>Project title: “#unforgettable: What are the social factors associated with memorable photographs?”</h2>

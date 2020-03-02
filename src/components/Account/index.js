@@ -9,8 +9,8 @@ import { AuthUserContext, withAuthorisation } from '../Session';
 const AccountPage = () => (
   <AuthUserContext.Consumer>
     {authUser => (
-      <div className="App">
-        <div className="App-content">
+      <div className='App'>
+        <div className='App-content'>
           <div className='App-header'>
             <Tape text={'Your Account'}/>
           </div>
