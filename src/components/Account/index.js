@@ -15,6 +15,7 @@ const AccountPage = () => (
             <Tape text={'Your Account'}/>
           </div>
           <p>Welcome {authUser.username} <span role='img' aria-label='wave'>👋</span></p>
+          <p><span role='img' aria-label='mail'>✉️</span> {authUser.email}</p>
         </div>
       </div>
     )}
