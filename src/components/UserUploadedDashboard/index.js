@@ -97,14 +97,9 @@ class ImagesBase extends React.Component {
       const imageObject = snapshot.val();
 
       if (imageObject) {
-        // Convert images list from snapshot
-        const imageList = Object.keys(imageObject).map(key => ({
-          ...imageObject[key],
-          uid: key
-        }));
-
+        // Store filter uids
         this.setState({ 
-          mostPostedLabelsImages: imageList
+          mostPostedLabelsImages: imageObject
         });
       }
       this.setState({ 
@@ -116,14 +111,9 @@ class ImagesBase extends React.Component {
       const imageObject = snapshot.val();
 
       if (imageObject) {
-        // Convert images list from snapshot
-        const imageList = Object.keys(imageObject).map(key => ({
-          ...imageObject[key],
-          uid: key
-        }));
-
+        // Store filter uids
         this.setState({ 
-          multipleTaggedPeopleImages: imageList
+          multipleTaggedPeopleImages: imageObject
         });
       }
       this.setState({ 
@@ -184,7 +174,7 @@ class ImagesBase extends React.Component {
       mostPostedLabelsImages,
       multipleTaggedPeopleImages
     } = this.state;
-    
+
     return (
       <AuthUserContext.Consumer>
         {authUser => (
@@ -224,7 +214,7 @@ class ImagesBase extends React.Component {
                 )}
                 {mostPostedLabelsImages && (
                   <Dropdown.Item 
-                    description={mostPostedLabelsImages.length}
+                    description={Object.keys(mostPostedLabelsImages).length}
                     text='Most posted tag'
                     value={MOMENTS.MOST_POSTED_LABELS_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -232,7 +222,7 @@ class ImagesBase extends React.Component {
                 )}
                 {multipleTaggedPeopleImages && (
                   <Dropdown.Item 
-                    description={multipleTaggedPeopleImages.length}
+                    description={Object.keys(multipleTaggedPeopleImages).length}
                     text='Multiple tagged people'
                     value={MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -256,7 +246,7 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.MOST_POSTED_LABELS_IMAGES && (
             mostPostedLabelsImages != null ? (
             <div>
-              <ImageList images={mostPostedLabelsImages} />
+              <ImageList images={images} filter={mostPostedLabelsImages} />
             </div>
           ) : (
             <p>You have no moments for 'most posted tags' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
@@ -265,7 +255,7 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES && (
             multipleTaggedPeopleImages != null ? (
             <div>
-              <ImageList images={multipleTaggedPeopleImages} />
+              <ImageList images={images} filter={multipleTaggedPeopleImages} />
             </div>
           ) : (
             <p>You have no moments for 'multiple tagged people' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
@@ -293,11 +283,19 @@ class ImagesBase extends React.Component {
   }
 }
 
-const ImageList = ({ images }) => (
+const ImageList = ({ images, filter }) => (
   <div className='moments'>
-  {images.map(image => (
+  {filter ? (
+    images.map(image => (
+      Object.keys(filter).includes(image.uid) && (
+        <ImageItem key={image.uid} image={image} />
+      )
+    ))
+  ) : (
+    images.map(image => (
       <ImageItem key={image.uid} image={image} />
-    ))}
+    ))
+  )}
   </div>
 );
 
