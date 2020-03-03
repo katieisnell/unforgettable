@@ -98,8 +98,12 @@ class ImagesBase extends React.Component {
 
       if (imageObject) {
         // Store filter uids
+        const imageList = Object.keys(imageObject).map(key => (
+          imageObject[key].uid
+        ));
+
         this.setState({ 
-          mostPostedLabelsImages: imageObject
+          mostPostedLabelsImages: imageList
         });
       }
       this.setState({ 
@@ -112,8 +116,12 @@ class ImagesBase extends React.Component {
 
       if (imageObject) {
         // Store filter uids
+        const imageList = Object.keys(imageObject).map(key => (
+          imageObject[key].uid
+        ));
+
         this.setState({ 
-          multipleTaggedPeopleImages: imageObject
+          multipleTaggedPeopleImages: imageList
         });
       }
       this.setState({ 
@@ -287,7 +295,7 @@ const ImageList = ({ images, filter }) => (
   <div className='moments'>
   {filter ? (
     images.map(image => (
-      Object.keys(filter).includes(image.uid) && (
+      Object.values(filter).includes(image.uid) && (
         <ImageItem key={image.uid} image={image} />
       )
     ))
