@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { Button, Form, Grid, Header, Icon, Modal, Segment } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Icon, Modal, Segment } from 'semantic-ui-react';
 
 import '../App/App.css';
 
@@ -85,10 +85,6 @@ class SignInFormBase extends Component {
               />
               <Button disabled={isInvalid} type='submit' fluid size='large'>
                   Sign In
-              </Button>
-              <div>OR</div>
-              <Button fluid size='large'>
-                <a href='http://iam-research.manchester.ac.uk/instagram/'>Sign In with Instagram</a>
               </Button>
             </Segment>
           </Form>
