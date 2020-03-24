@@ -155,6 +155,7 @@ class ImagesBase extends React.Component {
     this.props.firebase.userUploadedImages().off();
     this.props.firebase.mostPostedLabelsImages().off();
     this.props.firebase.multipleTaggedPeopleImages().off();
+    this.props.firebase.happyPeopleImages().off();
     this.props.firebase.users().off();
   }
 
