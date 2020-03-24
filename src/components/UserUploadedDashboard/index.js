@@ -39,6 +39,7 @@ class UserUploadedDashboard extends React.Component {
 class ImagesBase extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       currentUser: 'Unknown user',
       currentMoment: MOMENTS.ALL_IMAGES,
@@ -46,9 +47,11 @@ class ImagesBase extends React.Component {
       images: null,
       mostPostedLabelsImages: null,
       multipleTaggedPeopleImages: null,
+      happyPeopleImages: null,
       labelCloud: null,
       showPopup: false
     };
+
     this.fileInput = React.createRef();
     this.uploadImages = this.uploadImages.bind(this);
   }
@@ -128,6 +131,24 @@ class ImagesBase extends React.Component {
         loading: false 
       });
     });
+
+    this.props.firebase.happyPeopleImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
+      const imageObject = snapshot.val();
+
+      if (imageObject) {
+        // Store filter uids
+        const imageList = Object.keys(imageObject).map(key => (
+          imageObject[key].uid
+        ));
+
+        this.setState({ 
+          happyPeopleImages: imageList
+        });
+      }
+      this.setState({ 
+        loading: false 
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -155,19 +176,17 @@ class ImagesBase extends React.Component {
       
       const currentTime = (new Date()).getTime();
 
-      storageRef
-          .child(`userUploadedImages/${authUser.uid}/${file.name}`)
-          .put(file, metadata).then((snapshot) => {   
-            snapshot.ref.getDownloadURL().then(function(downloadURL) {
-              // console.log('Download url', downloadURL)
-
-              // Connects images to user in database
-              imagesRef.push({
-                media_url: downloadURL,
-                timestamp: currentTime,
-                user_id: authUser.uid,
-                content_origin: USER_UPLOADED
-              });
+      storageRef.child(`userUploadedImages/${authUser.uid}/${file.name}`).put(file, metadata)
+      .then((snapshot) => {   
+        snapshot.ref.getDownloadURL()
+        .then(function(downloadURL) {
+          // Connects images to user in database
+          imagesRef.push({
+            media_url: downloadURL,
+            timestamp: currentTime,
+            user_id: authUser.uid,
+            content_origin: USER_UPLOADED
+          });
         })
       })
     }
@@ -180,7 +199,8 @@ class ImagesBase extends React.Component {
       labelCloud,
       loading,
       mostPostedLabelsImages,
-      multipleTaggedPeopleImages
+      multipleTaggedPeopleImages,
+      happyPeopleImages
     } = this.state;
 
     return (
@@ -236,11 +256,18 @@ class ImagesBase extends React.Component {
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
                   />
                 )}
+                {happyPeopleImages && (
+                  <Dropdown.Item 
+                    description={Object.keys(happyPeopleImages).length}
+                    text='Happy people'
+                    value={MOMENTS.HAPPY_PEOPLE_IMAGES}
+                    onClick={(event, data) => this.setState({ currentMoment: data.value })}
+                  />
+                )}
               </Dropdown.Menu>
             </Dropdown>
             </div>
-          </div>
-          }
+          </div>}
 
           {currentMoment === MOMENTS.ALL_IMAGES && (
             images != null ? (
@@ -267,6 +294,14 @@ class ImagesBase extends React.Component {
             </div>
           ) : (
             <p>You have no moments for 'multiple tagged people' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+          ))}
+          {currentMoment === MOMENTS.HAPPY_PEOPLE_IMAGES && (
+            happyPeopleImages != null ? (
+            <div>
+              <ImageList images={images} filter={happyPeopleImages} />
+            </div>
+          ) : (
+            <p>You have no moments for 'happy people' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           ))}
 
           <div className='file-upload'>
@@ -333,22 +368,22 @@ const ImageItem = ({ image }) => (
           <Label.Group size='large'>
             {image.faces.map((element, index) => 
             <Label key={index}>
-              {(element.joyLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.joyLikelihood === 'VERY_LIKELY' || element.joyLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='joy'>😄</span>
               )}
-              {(element.surpriseLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.surpriseLikelihood === 'VERY_LIKELY' || element.surpriseLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='surprise'>😲</span>
               )}
-              {(element.sorrowLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.sorrowLikelihood === 'VERY_LIKELY' || element.sorrowLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='sorrow'>😢</span>
               )}
-              {(element.angerLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.angerLikelihood === 'VERY_LIKELY' || element.angerLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='anger'>😠</span>
               )}
-              {(element.joyLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
-               (element.surpriseLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
-               (element.sorrowLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
-               (element.angerLikelihood !== ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.joyLikelihood !== 'VERY_LIKELY' && element.joyLikelihood !== 'LIKELY') &&
+               (element.surpriseLikelihood !== 'VERY_LIKELY' && element.surpriseLikelihood !== 'LIKELY') &&
+               (element.sorrowLikelihood !== 'VERY_LIKELY' && element.sorrowLikelihood !== 'LIKELY') &&
+               (element.angerLikelihood !== 'VERY_LIKELY' && element.angerLikelihood !== 'LIKELY') && (
                 <span role='img' aria-label='blank'>😶</span>
               )}
             </Label>)}

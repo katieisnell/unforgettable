@@ -87,17 +87,17 @@ class LabelCloudBase extends Component {
       <>
         <div style={{ margin: '0 auto', maxWidth: '650px' }}>
           <ReactWordcloud
-              options={labelCloudOptions}
-              words={this.props.data}
-              callbacks={{
-                onWordClick: (label) => {
-                  this.setState({
-                    modalOpen: true,
-                    currentLabel: label
-                  })
-                }
-              }}
-            />
+            options={labelCloudOptions}
+            words={this.props.data}
+            callbacks={{
+              onWordClick: (label) => {
+                this.setState({
+                  modalOpen: true,
+                  currentLabel: label
+                })
+              }
+            }}
+          />
         </div>
         <Modal
           open={this.state.modalOpen}
