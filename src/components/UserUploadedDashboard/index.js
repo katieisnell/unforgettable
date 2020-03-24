@@ -193,6 +193,10 @@ class ImagesBase extends React.Component {
     }
   }
 
+  calculateUniqueCount(images) {
+    return new Set(Object.values(images)).size;
+  }
+
   render() {
     const { 
       currentMoment,
@@ -235,7 +239,7 @@ class ImagesBase extends React.Component {
                 <Dropdown.Divider />
                 {images && (
                   <Dropdown.Item 
-                    description={images.length}
+                    description={this.calculateUniqueCount(images)}
                     text='All images'
                     value={MOMENTS.ALL_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -243,7 +247,7 @@ class ImagesBase extends React.Component {
                 )}
                 {mostPostedLabelsImages && (
                   <Dropdown.Item 
-                    description={Object.keys(mostPostedLabelsImages).length}
+                    description={this.calculateUniqueCount(mostPostedLabelsImages)}
                     text='Most posted tag'
                     value={MOMENTS.MOST_POSTED_LABELS_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -251,7 +255,7 @@ class ImagesBase extends React.Component {
                 )}
                 {multipleTaggedPeopleImages && (
                   <Dropdown.Item 
-                    description={Object.keys(multipleTaggedPeopleImages).length}
+                    description={this.calculateUniqueCount(multipleTaggedPeopleImages)}
                     text='Multiple tagged people'
                     value={MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -259,7 +263,7 @@ class ImagesBase extends React.Component {
                 )}
                 {happyPeopleImages && (
                   <Dropdown.Item 
-                    description={Object.keys(happyPeopleImages).length}
+                    description={this.calculateUniqueCount(happyPeopleImages)}
                     text='Happy people'
                     value={MOMENTS.HAPPY_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
