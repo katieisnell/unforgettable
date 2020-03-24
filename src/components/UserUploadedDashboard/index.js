@@ -320,9 +320,12 @@ const ImageItem = ({ image }) => (
     <div className='moments-item-info'>
       <div>
         <Label.Group tag size='large'>
-          {image.labels != null && (
+          {image.labels != null && image.labels.error != null && (
+            <Label>{image.labels.error.description}</Label>
+          )}
+          {image.labels != null && image.labels.error == null && (
             image.labels.map((element, index) => 
-            <Label key={index}>{element.description}</Label>)
+              <Label key={index}>{element.description}</Label>)
           )}
         </Label.Group>
 
