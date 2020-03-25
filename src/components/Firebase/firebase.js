@@ -89,6 +89,8 @@ class Firebase {
   mostPostedLabelsImages = () => this.db.ref('moments/most_posted_labels_images');
   multipleTaggedPeopleImage = uid => this.db.ref(`moments/multiple_tagged_people_images/${uid}`);
   multipleTaggedPeopleImages = () => this.db.ref('moments/multiple_tagged_people_images');
+  happyPeopleImage = uid => this.db.ref(`moments/happy_people_images/${uid}`);
+  happyPeopleImages = () => this.db.ref('moments/happy_people_images');
 
   storageRef = () => this.storage().ref();
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Dimmer, Dropdown, Form, Label, Loader } from 'semantic-ui-react'
+import { Button, Dimmer, Dropdown, Form, Label, Loader } from 'semantic-ui-react';
+import _ from 'lodash';
 
 import '../App/App.css';
 import './UserUploadedDashboard.css';
@@ -39,6 +40,7 @@ class UserUploadedDashboard extends React.Component {
 class ImagesBase extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       currentUser: 'Unknown user',
       currentMoment: MOMENTS.ALL_IMAGES,
@@ -46,9 +48,12 @@ class ImagesBase extends React.Component {
       images: null,
       mostPostedLabelsImages: null,
       multipleTaggedPeopleImages: null,
+      happyPeopleImages: null,
       labelCloud: null,
+      topLabels: null,
       showPopup: false
     };
+
     this.fileInput = React.createRef();
     this.uploadImages = this.uploadImages.bind(this);
   }
@@ -79,16 +84,32 @@ class ImagesBase extends React.Component {
     });
 
     this.props.firebase.users().on('value', snapshot => {
-      const labelCloud = snapshot.val()[userId].label_cloud;
+      const labelCloud = snapshot.exportVal()[userId].label_cloud;
 
       if (labelCloud) {
-        let data = [];
-        Object.values(labelCloud['_data']).forEach(label => {
-          data.push({ text: label[0], value: label[1]})
+        const data = labelCloud['_data'];
+
+        // Construct data to be in the form that the <LabelCloud> component can accept
+        let labelCloudData = [];
+        Object.values(data).forEach(label => {
+          labelCloudData.push({ text: label[0], value: label[1] });
         })
 
+        // Filter keys with same max value
+        const maxValue = _.max(Object.values(data))[1];
+        const keysWithMaxValue = _.filter(Object.keys(data), o => {
+          return data[o][1] === maxValue
+        })
+        const topLabelsResult = keysWithMaxValue.map(d => { 
+          return { 
+            name: data[d][0], value: data[d][1] 
+          }
+        });
+        console.log(topLabelsResult)
+
         this.setState({
-          labelCloud: data
+          labelCloud: labelCloudData,
+          topLabels: topLabelsResult
         });
       }
     });
@@ -128,12 +149,31 @@ class ImagesBase extends React.Component {
         loading: false 
       });
     });
+
+    this.props.firebase.happyPeopleImages().orderByChild('user_id').equalTo(userId).on('value', snapshot => {
+      const imageObject = snapshot.val();
+
+      if (imageObject) {
+        // Store filter uids
+        const imageList = Object.keys(imageObject).map(key => (
+          imageObject[key].uid
+        ));
+
+        this.setState({ 
+          happyPeopleImages: imageList
+        });
+      }
+      this.setState({ 
+        loading: false 
+      });
+    });
   }
 
   componentWillUnmount() {
     this.props.firebase.userUploadedImages().off();
     this.props.firebase.mostPostedLabelsImages().off();
     this.props.firebase.multipleTaggedPeopleImages().off();
+    this.props.firebase.happyPeopleImages().off();
     this.props.firebase.users().off();
   }
 
@@ -155,22 +195,24 @@ class ImagesBase extends React.Component {
       
       const currentTime = (new Date()).getTime();
 
-      storageRef
-          .child(`userUploadedImages/${authUser.uid}/${file.name}`)
-          .put(file, metadata).then((snapshot) => {   
-            snapshot.ref.getDownloadURL().then(function(downloadURL) {
-              // console.log('Download url', downloadURL)
-
-              // Connects images to user in database
-              imagesRef.push({
-                media_url: downloadURL,
-                timestamp: currentTime,
-                user_id: authUser.uid,
-                content_origin: USER_UPLOADED
-              });
+      storageRef.child(`userUploadedImages/${authUser.uid}/${file.name}`).put(file, metadata)
+      .then((snapshot) => {   
+        snapshot.ref.getDownloadURL()
+        .then(function(downloadURL) {
+          // Connects images to user in database
+          imagesRef.push({
+            media_url: downloadURL,
+            timestamp: currentTime,
+            user_id: authUser.uid,
+            content_origin: USER_UPLOADED
+          });
         })
       })
     }
+  }
+
+  calculateUniqueCount(images) {
+    return new Set(Object.values(images)).size;
   }
 
   render() {
@@ -178,9 +220,11 @@ class ImagesBase extends React.Component {
       currentMoment,
       images,
       labelCloud,
+      topLabels,
       loading,
       mostPostedLabelsImages,
-      multipleTaggedPeopleImages
+      multipleTaggedPeopleImages,
+      happyPeopleImages
     } = this.state;
 
     return (
@@ -214,7 +258,7 @@ class ImagesBase extends React.Component {
                 <Dropdown.Divider />
                 {images && (
                   <Dropdown.Item 
-                    description={images.length}
+                    description={this.calculateUniqueCount(images)}
                     text='All images'
                     value={MOMENTS.ALL_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -222,7 +266,7 @@ class ImagesBase extends React.Component {
                 )}
                 {mostPostedLabelsImages && (
                   <Dropdown.Item 
-                    description={Object.keys(mostPostedLabelsImages).length}
+                    description={this.calculateUniqueCount(mostPostedLabelsImages)}
                     text='Most posted tag'
                     value={MOMENTS.MOST_POSTED_LABELS_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -230,21 +274,29 @@ class ImagesBase extends React.Component {
                 )}
                 {multipleTaggedPeopleImages && (
                   <Dropdown.Item 
-                    description={Object.keys(multipleTaggedPeopleImages).length}
+                    description={this.calculateUniqueCount(multipleTaggedPeopleImages)}
                     text='Multiple tagged people'
                     value={MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES}
+                    onClick={(event, data) => this.setState({ currentMoment: data.value })}
+                  />
+                )}
+                {happyPeopleImages && (
+                  <Dropdown.Item 
+                    description={this.calculateUniqueCount(happyPeopleImages)}
+                    text='Happy people'
+                    value={MOMENTS.HAPPY_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
                   />
                 )}
               </Dropdown.Menu>
             </Dropdown>
             </div>
-          </div>
-          }
+          </div>}
 
           {currentMoment === MOMENTS.ALL_IMAGES && (
             images != null ? (
             <div>
+              <h2>All images</h2>
               <ImageList images={images} />
             </div>
           ) : (
@@ -254,6 +306,17 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.MOST_POSTED_LABELS_IMAGES && (
             mostPostedLabelsImages != null ? (
             <div>
+              <h2>Images with the most posted labels</h2>
+              {topLabels && (
+                <Label.Group tag size='large'>
+                {topLabels.map(label => (
+                  <Label key={label.name}>
+                    {label.name}
+                    <Label.Detail>{label.value}</Label.Detail>
+                  </Label>
+                ))}
+                </Label.Group>
+              )}
               <ImageList images={images} filter={mostPostedLabelsImages} />
             </div>
           ) : (
@@ -263,10 +326,20 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES && (
             multipleTaggedPeopleImages != null ? (
             <div>
+              <h2>Images with the multiple people</h2>
               <ImageList images={images} filter={multipleTaggedPeopleImages} />
             </div>
           ) : (
             <p>You have no moments for 'multiple tagged people' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
+          ))}
+          {currentMoment === MOMENTS.HAPPY_PEOPLE_IMAGES && (
+            happyPeopleImages != null ? (
+            <div>
+              <h2>Images with happy people</h2>
+              <ImageList images={images} filter={happyPeopleImages} />
+            </div>
+          ) : (
+            <p>You have no moments for 'happy people' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           ))}
 
           <div className='file-upload'>
@@ -320,9 +393,12 @@ const ImageItem = ({ image }) => (
     <div className='moments-item-info'>
       <div>
         <Label.Group tag size='large'>
-          {image.labels != null && (
+          {image.labels != null && image.labels.error != null && (
+            <Label>{image.labels.error.description}</Label>
+          )}
+          {image.labels != null && image.labels.error == null && (
             image.labels.map((element, index) => 
-            <Label key={index}>{element.description}</Label>)
+              <Label key={index}>{element.description}</Label>)
           )}
         </Label.Group>
 
@@ -330,22 +406,22 @@ const ImageItem = ({ image }) => (
           <Label.Group size='large'>
             {image.faces.map((element, index) => 
             <Label key={index}>
-              {(element.joyLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.joyLikelihood === 'VERY_LIKELY' || element.joyLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='joy'>😄</span>
               )}
-              {(element.surpriseLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.surpriseLikelihood === 'VERY_LIKELY' || element.surpriseLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='surprise'>😲</span>
               )}
-              {(element.sorrowLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.sorrowLikelihood === 'VERY_LIKELY' || element.sorrowLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='sorrow'>😢</span>
               )}
-              {(element.angerLikelihood === ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.angerLikelihood === 'VERY_LIKELY' || element.angerLikelihood === 'LIKELY') && (
                 <span role='img' aria-label='anger'>😠</span>
               )}
-              {(element.joyLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
-               (element.surpriseLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
-               (element.sorrowLikelihood !== ('VERY_LIKELY' || 'LIKELY')) &&
-               (element.angerLikelihood !== ('VERY_LIKELY' || 'LIKELY')) && (
+              {(element.joyLikelihood !== 'VERY_LIKELY' && element.joyLikelihood !== 'LIKELY') &&
+               (element.surpriseLikelihood !== 'VERY_LIKELY' && element.surpriseLikelihood !== 'LIKELY') &&
+               (element.sorrowLikelihood !== 'VERY_LIKELY' && element.sorrowLikelihood !== 'LIKELY') &&
+               (element.angerLikelihood !== 'VERY_LIKELY' && element.angerLikelihood !== 'LIKELY') && (
                 <span role='img' aria-label='blank'>😶</span>
               )}
             </Label>)}
