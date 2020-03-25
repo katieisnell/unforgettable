@@ -105,7 +105,6 @@ class ImagesBase extends React.Component {
             name: data[d][0], value: data[d][1] 
           }
         });
-        console.log(topLabelsResult)
 
         this.setState({
           labelCloud: labelCloudData,
