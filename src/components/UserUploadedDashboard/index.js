@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Dimmer, Dropdown, Form, Label, Loader } from 'semantic-ui-react'
+import { Button, Dimmer, Dropdown, Form, Label, Loader } from 'semantic-ui-react';
+import _ from 'lodash';
 
 import '../App/App.css';
 import './UserUploadedDashboard.css';
@@ -49,6 +50,7 @@ class ImagesBase extends React.Component {
       multipleTaggedPeopleImages: null,
       happyPeopleImages: null,
       labelCloud: null,
+      topLabels: null,
       showPopup: false
     };
 
@@ -82,16 +84,32 @@ class ImagesBase extends React.Component {
     });
 
     this.props.firebase.users().on('value', snapshot => {
-      const labelCloud = snapshot.val()[userId].label_cloud;
+      const labelCloud = snapshot.exportVal()[userId].label_cloud;
 
       if (labelCloud) {
-        let data = [];
-        Object.values(labelCloud['_data']).forEach(label => {
-          data.push({ text: label[0], value: label[1]})
+        const data = labelCloud['_data'];
+
+        // Construct data to be in the form that the <LabelCloud> component can accept
+        let labelCloudData = [];
+        Object.values(data).forEach(label => {
+          labelCloudData.push({ text: label[0], value: label[1] });
         })
 
+        // Filter keys with same max value
+        const maxValue = _.max(Object.values(data))[1];
+        const keysWithMaxValue = _.filter(Object.keys(data), o => {
+          return data[o][1] === maxValue
+        })
+        const topLabelsResult = keysWithMaxValue.map(d => { 
+          return { 
+            name: data[d][0], value: data[d][1] 
+          }
+        });
+        console.log(topLabelsResult)
+
         this.setState({
-          labelCloud: data
+          labelCloud: labelCloudData,
+          topLabels: topLabelsResult
         });
       }
     });
@@ -193,11 +211,16 @@ class ImagesBase extends React.Component {
     }
   }
 
+  calculateUniqueCount(images) {
+    return new Set(Object.values(images)).size;
+  }
+
   render() {
     const { 
       currentMoment,
       images,
       labelCloud,
+      topLabels,
       loading,
       mostPostedLabelsImages,
       multipleTaggedPeopleImages,
@@ -235,7 +258,7 @@ class ImagesBase extends React.Component {
                 <Dropdown.Divider />
                 {images && (
                   <Dropdown.Item 
-                    description={images.length}
+                    description={this.calculateUniqueCount(images)}
                     text='All images'
                     value={MOMENTS.ALL_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -243,7 +266,7 @@ class ImagesBase extends React.Component {
                 )}
                 {mostPostedLabelsImages && (
                   <Dropdown.Item 
-                    description={Object.keys(mostPostedLabelsImages).length}
+                    description={this.calculateUniqueCount(mostPostedLabelsImages)}
                     text='Most posted tag'
                     value={MOMENTS.MOST_POSTED_LABELS_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -251,7 +274,7 @@ class ImagesBase extends React.Component {
                 )}
                 {multipleTaggedPeopleImages && (
                   <Dropdown.Item 
-                    description={Object.keys(multipleTaggedPeopleImages).length}
+                    description={this.calculateUniqueCount(multipleTaggedPeopleImages)}
                     text='Multiple tagged people'
                     value={MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -259,7 +282,7 @@ class ImagesBase extends React.Component {
                 )}
                 {happyPeopleImages && (
                   <Dropdown.Item 
-                    description={Object.keys(happyPeopleImages).length}
+                    description={this.calculateUniqueCount(happyPeopleImages)}
                     text='Happy people'
                     value={MOMENTS.HAPPY_PEOPLE_IMAGES}
                     onClick={(event, data) => this.setState({ currentMoment: data.value })}
@@ -273,6 +296,7 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.ALL_IMAGES && (
             images != null ? (
             <div>
+              <h2>All images</h2>
               <ImageList images={images} />
             </div>
           ) : (
@@ -282,6 +306,17 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.MOST_POSTED_LABELS_IMAGES && (
             mostPostedLabelsImages != null ? (
             <div>
+              <h2>Images with the most posted labels</h2>
+              {topLabels && (
+                <Label.Group tag size='large'>
+                {topLabels.map(label => (
+                  <Label key={label.name}>
+                    {label.name}
+                    <Label.Detail>{label.value}</Label.Detail>
+                  </Label>
+                ))}
+                </Label.Group>
+              )}
               <ImageList images={images} filter={mostPostedLabelsImages} />
             </div>
           ) : (
@@ -291,6 +326,7 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES && (
             multipleTaggedPeopleImages != null ? (
             <div>
+              <h2>Images with the multiple people</h2>
               <ImageList images={images} filter={multipleTaggedPeopleImages} />
             </div>
           ) : (
@@ -299,6 +335,7 @@ class ImagesBase extends React.Component {
           {currentMoment === MOMENTS.HAPPY_PEOPLE_IMAGES && (
             happyPeopleImages != null ? (
             <div>
+              <h2>Images with happy people</h2>
               <ImageList images={images} filter={happyPeopleImages} />
             </div>
           ) : (
