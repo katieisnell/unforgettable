@@ -301,7 +301,6 @@ class ImagesBase extends React.Component {
           ) : (
             <p>You have no images <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           ))}
-
           {currentMoment === MOMENTS.MOST_POSTED_LABELS_IMAGES && (
             mostPostedLabelsImages != null ? (
             <div>
@@ -321,7 +320,6 @@ class ImagesBase extends React.Component {
           ) : (
             <p>You have no moments for 'most posted tags' <span role='img' aria-label='shrug'>🤷‍♂️</span></p>
           ))}
-
           {currentMoment === MOMENTS.MULTIPLE_TAGGED_PEOPLE_IMAGES && (
             multipleTaggedPeopleImages != null ? (
             <div>
