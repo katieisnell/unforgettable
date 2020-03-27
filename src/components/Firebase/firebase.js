@@ -78,6 +78,10 @@ class Firebase {
   userUploadedImage = uid => this.db.ref(`userUploadedImages/${uid}`);
   userUploadedImages = () => this.db.ref('userUploadedImages');
 
+  // Mark as unforgettable API
+  markAsUnforgettableLabel = uid => this.db.ref(`markAsUnforgettableLabels/${uid}`);
+  markAsUnforgettableLabels = () => this.db.ref('markAsUnforgettableLabels');
+
   // Labels API
   label = uid => this.db.ref(`labels/${uid}`);
   labels = () => this.db.ref('labels');
